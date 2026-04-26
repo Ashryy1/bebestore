@@ -20,9 +20,16 @@ export default function CategoriesPage() {
         try {
             const res = await fetch('/api/categories');
             const data = await res.json();
-            setCategories(data);
+            if (res.ok) {
+                setCategories(data);
+            } else {
+                console.error('Fetch categories error:', data.error);
+                alert(`Error: ${data.error || 'Failed to fetch categories'}`);
+                setCategories([]);
+            }
         } catch (error) {
             console.error('Fetch categories error:', error);
+            alert('Something went wrong while fetching categories.');
         } finally {
             setLoading(false);
         }
@@ -44,12 +51,17 @@ export default function CategoriesPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: newCategory }),
             });
+            const data = await res.json();
             if (res.ok) {
                 setNewCategory('');
                 fetchCategories();
+            } else {
+                console.error('Add category error:', data.error);
+                alert(`Error: ${data.error || 'Failed to add section'}`);
             }
         } catch (error) {
             console.error('Add category error:', error);
+            alert('Something went wrong while adding the section.');
         } finally {
             setSubmitting(false);
         }

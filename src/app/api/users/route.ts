@@ -10,6 +10,7 @@ export async function GET() {
         const users = await User.find({}, '-password').sort({ createdAt: -1 });
         return NextResponse.json(users);
     } catch (error: any) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        const status = error.message?.includes('Unauthorized') ? 401 : 500;
+        return NextResponse.json({ error: error.message }, { status });
     }
 }

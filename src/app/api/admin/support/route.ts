@@ -32,17 +32,18 @@ export async function GET() {
                     as: 'userInfo'
                 }
             },
-            { $unwind: '$userInfo' },
+            { $unwind: { path: '$userInfo', preserveNullAndEmptyArrays: true } },
             {
                 $project: {
                     userId: '$_id',
-                    name: '$userInfo.name',
-                    email: '$userInfo.email',
+                    name: { $ifNull: ['$userInfo.name', 'Deleted User'] },
+                    email: { $ifNull: ['$userInfo.email', 'N/A'] },
                     lastMessage: 1,
                     lastTimestamp: 1,
                     unreadCount: 1
                 }
             },
+
             { $sort: { lastTimestamp: -1 } }
         ]);
 

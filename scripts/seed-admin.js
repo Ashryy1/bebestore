@@ -3,7 +3,7 @@
 
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-require('dotenv').config({ path: '.env.local' });
+require('dotenv').config({ path: '.env' });
 
 async function seed() {
     const uri = process.env.MONGODB_URI;
@@ -24,8 +24,13 @@ async function seed() {
 
     const User = mongoose.models.User || mongoose.model('User', userSchema);
 
-    const adminEmail = 'hossaamashour@gmail.com';
-    const adminPassword = 'Ashry1410';
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+
+    if (!adminEmail || !adminPassword) {
+        console.error('❌ ADMIN_EMAIL or ADMIN_PASSWORD not found in .env');
+        process.exit(1);
+    }
 
     const existing = await User.findOne({ email: adminEmail });
     if (existing) {

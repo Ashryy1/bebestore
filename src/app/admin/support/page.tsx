@@ -41,9 +41,12 @@ export default function AdminSupportPage() {
     const fetchConversations = async () => {
         try {
             const res = await fetch('/api/admin/support');
+            const data = await res.json();
             if (res.ok) {
-                const data = await res.json();
                 setConversations(data.conversations);
+            } else {
+                console.error('Fetch conversations error:', data.error);
+                // Silence error if we are polling, but log it
             }
         } catch (error) {
             console.error('Fetch conversations error:', error);
@@ -55,9 +58,11 @@ export default function AdminSupportPage() {
     const fetchMessages = async (userId: string) => {
         try {
             const res = await fetch(`/api/admin/support/${userId}`);
+            const data = await res.json();
             if (res.ok) {
-                const data = await res.json();
                 setMessages(data.messages);
+            } else {
+                console.error('Fetch messages error:', data.error);
             }
         } catch (error) {
             console.error('Fetch messages error:', error);

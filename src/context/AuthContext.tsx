@@ -52,28 +52,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     async function login(email: string, password: string) {
-        // LOCAL TEST MODE FALLBACK (Bypasses DB if credentials match)
-        if (password === 'test123') {
-            let testUser: AuthUser | null = null;
-            if (email === 'admin@test.com') {
-                testUser = { userId: 'test-admin-id', email: 'admin@test.com', name: 'Test Admin', role: 'admin' };
-            } else if (email === 'user@test.com') {
-                testUser = { userId: 'test-user-id', email: 'user@test.com', name: 'Test User', role: 'user' };
-            }
-
-            if (testUser) {
-                setUser(testUser);
-                sessionStorage.setItem('bibastore_test_user', JSON.stringify(testUser));
-                return { success: true };
-            }
-        }
-
+        // API Call
         try {
             const res = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
             });
+
             const data = await res.json();
             if (res.ok) {
                 setUser({
