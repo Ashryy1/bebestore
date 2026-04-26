@@ -59,7 +59,8 @@ export default function AdminOrdersPage() {
         const matchesSearch = searchTerm
             ? o.userName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             o.orderNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            o.userPhone?.includes(searchTerm)
+            o.userPhone?.includes(searchTerm) ||
+            o.source?.toLowerCase().includes(searchTerm.toLowerCase())
             : true;
         return matchesFilter && matchesSearch;
     });
@@ -142,9 +143,14 @@ export default function AdminOrdersPage() {
                                         <div>
                                             <div className="flex items-center gap-3 mb-2">
                                                 <h3 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">#{order.orderNumber}</h3>
-                                                <span className={`px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border border-current ${statusConfig[order.status as OrderStatus]?.bg} ${statusConfig[order.status as OrderStatus]?.color}`}>
-                                                    {order.status}
-                                                </span>
+                                                <div className="flex gap-2">
+                                                    <span className={`px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border border-current ${statusConfig[order.status as OrderStatus]?.bg || 'bg-slate-500/5'} ${statusConfig[order.status as OrderStatus]?.color || 'text-slate-500'}`}>
+                                                        {order.status}
+                                                    </span>
+                                                    <span className={`px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border border-current ${order.source === 'custom' ? 'bg-violet-600/5 text-violet-600' : 'bg-blue-600/5 text-blue-600'}`}>
+                                                        {order.source === 'custom' ? 'Custom' : 'Shop'}
+                                                    </span>
+                                                </div>
                                             </div>
                                             <div className="flex items-center gap-4">
                                                 <div className="flex items-center gap-2">
@@ -175,10 +181,10 @@ export default function AdminOrdersPage() {
                                                 <option value="Cancelled">Cancelled</option>
                                             </select>
                                             <Link
-                                                href={`/admin/orders/${order._id}`}
+                                                href={order.source === 'custom' ? `/admin/requests/${order._id}` : `/admin/orders/${order._id}`}
                                                 className="text-center text-[8px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-colors"
                                             >
-                                                View Items ({order.items.length})
+                                                {order.source === 'custom' ? 'View Details' : `View Items (${order.items?.length || 0})`}
                                             </Link>
                                         </div>
                                     </div>

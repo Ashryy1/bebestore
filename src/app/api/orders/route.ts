@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { Order } from '@/lib/models/Order';
+import { CustomRequest } from '@/lib/models/CustomRequest';
 
 export async function POST(req: NextRequest) {
     try {
@@ -37,8 +38,33 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
     try {
         await connectDB();
-        const orders = await Order.find().sort({ createdAt: -1 });
-        return NextResponse.json({ orders });
+
+        // Fetch both Shop Orders and Custom Requests
+        const [orders, customRequests] = await Promise.all([
+            Order.find().sort({ createdAt: -1 }).lean(),
+            CustomRequest.find().sort({ createdAt: -1 }).lean()
+        ]);
+
+        // Normalize both lists
+        const normalizedOrders = orders.map((o: any) => ({
+            ...o,
+            source: 'shop'
+        }));
+
+        const normalizedCustom = customRequests.map((r: any) => ({
+            ...r,
+            source: 'custom',
+            // Map common fields if they differ
+            totalAmount: r.adminQuote || 0,
+            items: r.items || [], // Requests might not have items array in same way
+        }));
+
+        // Merge and sort
+        const allOrders = [...normalizedOrders, ...normalizedCustom].sort((a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+
+        return NextResponse.json({ orders: allOrders });
     } catch (error: any) {
         console.error('Order GET error:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

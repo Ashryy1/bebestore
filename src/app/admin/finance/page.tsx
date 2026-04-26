@@ -11,6 +11,7 @@ import Link from 'next/link';
 
 export default function AdminFinancePage() {
     const [records, setRecords] = useState<any[]>([]);
+    const [summary, setSummary] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [form, setForm] = useState({
         type: 'expense',
@@ -28,7 +29,8 @@ export default function AdminFinancePage() {
         try {
             const res = await fetch('/api/finance');
             const data = await res.json();
-            setRecords(data);
+            setRecords(data.records || []);
+            setSummary(data.summary);
         } catch (error) {
             console.error('Fetch finance error:', error);
         } finally {
@@ -64,7 +66,7 @@ export default function AdminFinancePage() {
         if (curr.type === 'income') acc.income += curr.amount;
         else acc.expense += curr.amount;
         return acc;
-    }, { income: 0, expense: 0 });
+    }, { income: summary?.orderIncome || 0, expense: 0 });
 
     const totalProfit = stats.income - stats.expense;
 
