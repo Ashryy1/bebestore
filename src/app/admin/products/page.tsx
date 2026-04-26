@@ -81,7 +81,7 @@ export default function AdminProductsPage() {
                     type="text"
                     placeholder="Search collection..."
                     value={search}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e) => setSearch(e.target.value)}
                     className="input-field bg-slate-100 dark:bg-white/5 border-none h-14 pl-12 pr-6 rounded-2xl w-full text-sm font-bold shadow-inner"
                 />
             </div>
