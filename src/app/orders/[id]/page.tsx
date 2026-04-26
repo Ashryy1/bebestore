@@ -1,0 +1,158 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+import { ArrowLeft, ShoppingBag, Clock, Package, Truck, CheckCircle, Copy, Loader2, MessageCircle } from 'lucide-react';
+import Link from 'next/link';
+import { useLanguage } from '@/context/LanguageContext';
+
+export default function OrderDetailPage() {
+    const { id } = useParams();
+    const { lang } = useLanguage();
+    const isAr = lang === 'ar';
+    const [order, setOrder] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (id) fetchOrder();
+    }, [id]);
+
+    const fetchOrder = async () => {
+        try {
+            const res = await fetch(`/api/orders/${id}`);
+            const data = await res.json();
+            if (data.order) setOrder(data.order);
+        } catch (error) {
+            console.error('Fetch order error:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Loader2 size={48} className="text-indigo-600 animate-spin" />
+            </div>
+        );
+    }
+
+    if (!order) {
+        return (
+            <div className="min-h-screen pt-32 text-center px-6">
+                <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-4">
+                    {isAr ? 'الطلب غير موجود' : 'Order Not Found'}
+                </h2>
+                <Link href="/track" className="text-indigo-600 font-bold underline">
+                    {isAr ? 'العودة للتتبع' : 'Back to Tracking'}
+                </Link>
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen pt-32 pb-20 px-6 relative overflow-hidden bg-white dark:bg-slate-950 transition-colors duration-500">
+            <div className="orb w-[600px] h-[600px] bg-indigo-500/5 -top-40 -left-40 animate-float" />
+
+            <div className="max-w-4xl mx-auto relative z-10">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+                    <Link
+                        href="/track"
+                        className="inline-flex items-center gap-3 text-slate-400 hover:text-indigo-500 transition-all text-sm font-black uppercase tracking-widest"
+                    >
+                        <ArrowLeft size={18} className={isAr ? 'rotate-180' : ''} />
+                        {isAr ? 'العودة للتتبع' : 'Back to Tracking'}
+                    </Link>
+                    <div className="flex items-center gap-4">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 py-2 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/5">
+                            ID: {order.orderNumber}
+                        </span>
+                        <button
+                            onClick={() => {
+                                navigator.clipboard.writeText(order.orderNumber);
+                                alert(isAr ? 'تم نسخ المعرف!' : 'ID Copied!');
+                            }}
+                            className="w-10 h-10 rounded-xl bg-indigo-600/10 text-indigo-600 flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-all"
+                        >
+                            <Copy size={16} />
+                        </button>
+                    </div>
+                </div>
+
+                <motion.div
+                    className="glass-card rounded-[3rem] p-8 md:p-12 mb-8"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                >
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
+                        <div>
+                            <span className="badge-brand mb-4">{isAr ? 'طلب منتج' : 'Shop Order'}</span>
+                            <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter leading-none">
+                                {isAr ? 'حالة الطلب' : 'Order Status'}
+                            </h1>
+                        </div>
+                        <div className={`px-8 py-4 rounded-3xl border-2 flex items-center gap-3 ${order.status === 'Completed' ? 'border-emerald-500/20 bg-emerald-500/5 text-emerald-500' : 'border-indigo-500/20 bg-indigo-500/5 text-indigo-500'}`}>
+                            <div className={`w-3 h-3 rounded-full animate-pulse ${order.status === 'Completed' ? 'bg-emerald-500' : 'bg-indigo-500'}`} />
+                            <span className="text-lg font-black uppercase tracking-widest">{order.status}</span>
+                        </div>
+                    </div>
+
+                    <div className="space-y-6">
+                        {order.items.map((item: any, idx: number) => (
+                            <div key={idx} className="flex items-center gap-6 p-6 rounded-[2rem] bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+                                <div className="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0">
+                                    <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                                </div>
+                                <div className="flex-1">
+                                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-1">{item.title}</h3>
+                                    <p className="text-sm text-slate-500 font-medium">
+                                        {isAr ? 'الكمية:' : 'Qty:'} {item.quantity} • {item.price} ج.م
+                                    </p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-xl font-black text-indigo-600 dark:text-indigo-400">
+                                        {(item.price * item.quantity).toLocaleString()} <span className="text-xs">EGP</span>
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="mt-12 flex justify-between items-center p-8 rounded-3xl bg-indigo-600 text-white shadow-2xl shadow-indigo-600/30">
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest opacity-70 mb-1">{isAr ? 'إجمالي الطلب' : 'TOTAL AMOUNT'}</p>
+                            <p className="text-4xl font-black">{order.totalAmount.toLocaleString()} <span className="text-sm opacity-70">EGP</span></p>
+                        </div>
+                        <ShoppingBag size={40} className="opacity-20" />
+                    </div>
+                </motion.div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="glass-card rounded-[2.5rem] p-8">
+                        <div className="flex items-center gap-3 mb-6">
+                            <Clock size={20} className="text-slate-400" />
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{isAr ? 'معلومات العميل' : 'CUSTOMER INFO'}</h3>
+                        </div>
+                        <p className="text-lg font-bold text-slate-900 dark:text-white mb-1">{order.userName}</p>
+                        <p className="text-slate-500 dark:text-slate-400 font-medium">{order.userPhone}</p>
+                    </div>
+
+                    <div className="glass-card rounded-[2.5rem] p-8">
+                        <div className="flex items-center gap-3 mb-6">
+                            <MessageCircle size={20} className="text-slate-400" />
+                            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{isAr ? 'تواصل معنا' : 'STAY CONNECTED'}</h3>
+                        </div>
+                        <button
+                            onClick={() => window.open(`https://wa.me/201234567890?text=${encodeURIComponent(`مرحباً، أستفسر عن طلبي رقم #${order.orderNumber}`)}`, '_blank')}
+                            className="w-full py-4 rounded-2xl bg-emerald-500 text-white font-black uppercase tracking-widest text-[10px] hover:bg-emerald-600 transition-all flex items-center justify-center gap-2"
+                        >
+                            <MessageCircle size={16} />
+                            {isAr ? 'تواصل عبر واتساب' : 'WhatsApp Us'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
