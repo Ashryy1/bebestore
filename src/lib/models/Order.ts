@@ -24,6 +24,9 @@ export interface IOrder {
         address: string;
         city: string;
     };
+    depositAmount: number;
+    depositStatus: 'None' | 'Requested' | 'Pending' | 'Paid' | 'Rejected';
+    depositScreenshot?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -54,6 +57,13 @@ const OrderSchema = new Schema<IOrder>(
             address: { type: String },
             city: { type: String },
         },
+        depositAmount: { type: Number, default: 0 },
+        depositStatus: {
+            type: String,
+            enum: ['None', 'Requested', 'Pending', 'Paid', 'Rejected'],
+            default: 'None',
+        },
+        depositScreenshot: { type: String },
     },
     { timestamps: true }
 );

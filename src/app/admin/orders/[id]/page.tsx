@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Package, ArrowLeft, User, Phone, MapPin, Calendar, CreditCard, ShoppingBag, Clock, CheckCircle, Truck, XCircle, Loader2 } from 'lucide-react';
+import { Package, ArrowLeft, User, Phone, MapPin, Calendar, CreditCard, ShoppingBag, Clock, CheckCircle, Truck, XCircle, Loader2, DollarSign } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function OrderDetailPage() {
@@ -101,6 +101,97 @@ export default function OrderDetailPage() {
                             <h2 className="text-xs font-black uppercase tracking-[0.3em] text-slate-400">Total Calculation</h2>
                         </div>
                         <p className="text-3xl font-black text-indigo-600 dark:text-indigo-400">{order.totalAmount.toLocaleString()} <span className="text-sm font-bold uppercase">EGP</span></p>
+                    </div>
+
+                    {/* Deposit Management Card */}
+                    <div className="glass-card rounded-[2.5rem] p-8 border border-slate-100 dark:border-white/5 space-y-6">
+                        <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center gap-3">
+                                <DollarSign className="text-amber-500" size={20} />
+                                <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Deposit Management</h2>
+                            </div>
+                            {order.depositStatus !== 'None' && (
+                                <span className={`px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${order.depositStatus === 'Paid' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}`}>
+                                    {order.depositStatus}
+                                </span>
+                            )}
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="space-y-4">
+                                <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest ml-1">Request Payment</label>
+                                <div className="flex gap-2">
+                                    <input
+                                        type="number"
+                                        value={order.depositAmount || ''}
+                                        onChange={(e) => setOrder({ ...order, depositAmount: parseFloat(e.target.value) })}
+                                        placeholder="Amount EGP..."
+                                        className="input-field bg-slate-50 dark:bg-white/5 border-none h-14 px-6 rounded-2xl flex-1 text-sm font-black"
+                                    />
+                                    <button
+                                        onClick={async () => {
+                                            const res = await fetch(`/api/orders/${id}`, {
+                                                method: 'PUT',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ depositAmount: order.depositAmount, depositStatus: 'Requested' })
+                                            });
+                                            if (res.ok) {
+                                                const data = await res.json();
+                                                setOrder(data.order);
+                                            }
+                                        }}
+                                        disabled={!order.depositAmount}
+                                        className="h-14 px-6 rounded-2xl bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest active:scale-95 transition-all disabled:opacity-50"
+                                    >
+                                        Request
+                                    </button>
+                                </div>
+                            </div>
+
+                            {order.depositScreenshot && (
+                                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+                                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-3">User Proof</p>
+                                    <div className="aspect-video relative rounded-xl overflow-hidden mb-4 group cursor-pointer" onClick={() => window.open(order.depositScreenshot, '_blank')}>
+                                        <img src={order.depositScreenshot} className="w-full h-full object-cover" />
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] font-black uppercase">Click to open</div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <button
+                                            onClick={async () => {
+                                                const res = await fetch(`/api/orders/${id}`, {
+                                                    method: 'PUT',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({ depositStatus: 'Paid' })
+                                                });
+                                                if (res.ok) {
+                                                    const data = await res.json();
+                                                    setOrder(data.order);
+                                                }
+                                            }}
+                                            className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 text-[8px] font-black uppercase hover:bg-emerald-500 hover:text-white transition-all"
+                                        >
+                                            Approve
+                                        </button>
+                                        <button
+                                            onClick={async () => {
+                                                const res = await fetch(`/api/orders/${id}`, {
+                                                    method: 'PUT',
+                                                    headers: { 'Content-Type': 'application/json' },
+                                                    body: JSON.stringify({ depositStatus: 'Rejected' })
+                                                });
+                                                if (res.ok) {
+                                                    const data = await res.json();
+                                                    setOrder(data.order);
+                                                }
+                                            }}
+                                            className="p-3 rounded-xl bg-red-500/10 text-red-600 text-[8px] font-black uppercase hover:bg-red-500 hover:text-white transition-all"
+                                        >
+                                            Reject
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
 

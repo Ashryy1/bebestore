@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Timeline from '@/components/Timeline';
-import { ArrowLeft, DollarSign, CheckCircle, MapPin, Clock, Sparkles, Loader2, Send, Package, Truck, Copy } from 'lucide-react';
+import { ArrowLeft, DollarSign, CheckCircle, MapPin, Clock, Sparkles, Loader2, Send, Package, Truck, Copy, FileText, Phone } from 'lucide-react';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
-
+import ImageUpload from '@/components/ImageUpload';
 const allStatuses = ['Pending', 'Reviewing', 'Pricing', 'Processing', 'Shipped', 'Completed'];
 
 export default function TrackPage() {
@@ -235,6 +235,90 @@ export default function TrackPage() {
                             </motion.div>
                         </div>
 
+                        {/* Deposit Request Card */}
+                        <AnimatePresence>
+                            {request.depositStatus === 'Requested' && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.9 }}
+                                    className="mb-16"
+                                >
+                                    <div className="glass-card rounded-[2.5rem] p-10 border-amber-500/20 bg-amber-500/5 relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-bl-[100px] -mr-10 -mt-10" />
+                                        <div className="flex items-center gap-6 mb-10">
+                                            <div className="w-16 h-16 rounded-[2rem] bg-amber-500 flex items-center justify-center text-white shadow-xl shadow-amber-500/30">
+                                                <DollarSign size={32} />
+                                            </div>
+                                            <div>
+                                                <h3 className="text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">
+                                                    {isAr ? 'مطلوب عربون' : 'Deposit Required'}
+                                                </h3>
+                                                <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">
+                                                    {isAr ? 'مبلغ العربون المستحق:' : 'Required down payment:'} <span className="text-amber-600 ml-1">{request.depositAmount} EGP</span>
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-8">
+                                            <div className="p-6 rounded-3xl bg-white/50 dark:bg-slate-900/50 border border-amber-500/10">
+                                                <p className="text-sm font-bold text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+                                                    {isAr ? 'برجاء دفع مبلغ العربون عبر محفظة فودافون كاش أو إنستباي، ورفع لقطة شاشة للإيصال أدناه لتأكيد طلبك.' : 'Please pay the deposit via Vodafone Cash or InstaPay, and upload a screenshot of the receipt below to confirm your order.'}
+                                                </p>
+                                                <div className="flex items-center gap-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+                                                    <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-white">
+                                                        <Phone size={18} />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-[8px] font-black text-amber-600 uppercase tracking-widest mb-0.5">{isAr ? 'رقم التحويل' : 'PAYMENT NUMBER'}</p>
+                                                        <p className="text-lg font-black text-slate-900 dark:text-white">010 1234 5678</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-4">
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">
+                                                    {isAr ? 'رفع إثبات الدفع' : 'UPLOAD PAYMENT PROOF'}
+                                                </p>
+                                                <ImageUpload
+                                                    images={request.depositScreenshot ? [request.depositScreenshot] : []}
+                                                    onChange={async (imgs) => {
+                                                        if (imgs.length > 0) {
+                                                            const res = await fetch(`/api/custom-requests/${id}`, {
+                                                                method: 'PATCH',
+                                                                headers: { 'Content-Type': 'application/json' },
+                                                                body: JSON.stringify({ depositScreenshot: imgs[0] })
+                                                            });
+                                                            if (res.ok) fetchRequest();
+                                                        }
+                                                    }}
+                                                    maxFiles={1}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+
+                            {request.depositStatus === 'Pending' && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    className="mb-16 p-10 rounded-[3rem] bg-indigo-600/5 border-2 border-dashed border-indigo-600/20 text-center"
+                                >
+                                    <div className="w-20 h-20 rounded-[2.5rem] bg-indigo-600 flex items-center justify-center text-white mx-auto mb-6 shadow-2xl shadow-indigo-600/30">
+                                        <Clock size={32} className="animate-spin-slow" />
+                                    </div>
+                                    <h3 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-2">
+                                        {isAr ? 'جاري مراجعة الدفع' : 'Payment Under Review'}
+                                    </h3>
+                                    <p className="text-sm text-slate-500 font-medium">
+                                        {isAr ? 'لقد تلقينا إيصال الدفع الخاص بك. سنقوم بمراجعته وتفعيل طلبك في أقرب وقت ممكن.' : 'We have received your payment proof. We will review it and activate your order shortly.'}
+                                    </p>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
                         {/* Checkout Form for priced items */}
                         <AnimatePresence>
                             {isPriced && !isConfirmed && (
@@ -351,6 +435,4 @@ export default function TrackPage() {
         </div>
     );
 }
-
-import { FileText } from 'lucide-react';
 

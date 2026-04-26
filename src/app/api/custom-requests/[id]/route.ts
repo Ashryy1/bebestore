@@ -43,12 +43,13 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
             request.shippingDetails = body.shippingDetails;
         }
 
-        if (body.status) {
-            request.status = body.status;
+        if (body.depositScreenshot) {
+            request.depositScreenshot = body.depositScreenshot;
+            request.depositStatus = 'Pending';
             request.timeline.push({
-                status: body.status,
+                status: 'Deposit Paid',
                 timestamp: new Date(),
-                note: body.timelineNote || `Status updated to ${body.status}`,
+                note: body.timelineNote || `Deposit proof uploaded by user`,
             });
         }
 
@@ -119,17 +120,24 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
             request.adminNotes = body.adminNotes;
         }
 
+        // Update deposit fields
+        if (body.depositAmount !== undefined) request.depositAmount = body.depositAmount;
+        if (body.depositStatus !== undefined) request.depositStatus = body.depositStatus;
+        if (body.depositScreenshot !== undefined) request.depositScreenshot = body.depositScreenshot;
+
         await request.save();
 
         // Send push notification to the user
         const subscriptions = await PushSubscription.find({ userId: request.userId });
         const notificationPayload = {
             title: '🧶 BibaStore - Order Update',
-            body: body.status
-                ? `Your custom request status changed to: ${body.status}`
-                : body.adminQuote
-                    ? `New price quote: $${body.adminQuote}. Check it out!`
-                    : 'Your custom request has been updated.',
+            body: body.depositStatus === 'Requested'
+                ? `Deposit requested: EGP ${body.depositAmount}. Please upload proof of payment.`
+                : body.status
+                    ? `Your custom request status changed to: ${body.status}`
+                    : body.adminQuote
+                        ? `New price quote: EGP ${body.adminQuote}. Check it out!`
+                        : 'Your custom request has been updated.',
             url: `/track/${id}`,
             tag: `request-${id}`,
         };

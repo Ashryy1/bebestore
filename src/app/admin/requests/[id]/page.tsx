@@ -201,24 +201,78 @@ export default function AdminRequestDetailPage() {
                                 <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Financials</h2>
                             </div>
 
-                            <div className="space-y-4">
-                                <div className="relative group">
-                                    <DollarSign size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
-                                    <input
-                                        type="number"
-                                        value={quote}
-                                        onChange={(e) => setQuote(e.target.value)}
-                                        placeholder="Set price..."
-                                        className="input-field bg-slate-50 dark:bg-white/5 border-none h-14 pl-12 pr-6 rounded-2xl w-full text-sm font-black"
-                                    />
+                            <div className="space-y-6">
+                                <div className="space-y-4 pb-6 border-b border-slate-100 dark:border-white/5">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Total Quote</label>
+                                    <div className="relative group">
+                                        <DollarSign size={18} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                                        <input
+                                            type="number"
+                                            value={quote}
+                                            onChange={(e) => setQuote(e.target.value)}
+                                            placeholder="Set price..."
+                                            className="input-field bg-slate-50 dark:bg-white/5 border-none h-14 pl-12 pr-6 rounded-2xl w-full text-sm font-black"
+                                        />
+                                    </div>
+                                    <button
+                                        onClick={() => handleUpdate({ adminQuote: parseFloat(quote), status: 'Pricing' })}
+                                        disabled={!quote || updateLoading}
+                                        className="premium-button w-full h-14 rounded-2xl"
+                                    >
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Apply Quote</span>
+                                    </button>
                                 </div>
-                                <button
-                                    onClick={() => handleUpdate({ adminQuote: parseFloat(quote), status: 'Pricing' })}
-                                    disabled={!quote || updateLoading}
-                                    className="premium-button w-full h-14 rounded-2xl"
-                                >
-                                    <span className="text-[10px] font-black uppercase tracking-widest">Apply Quote</span>
-                                </button>
+
+                                <div className="space-y-4">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1 flex items-center justify-between">
+                                        Deposit Request
+                                        {request.depositStatus !== 'None' && (
+                                            <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase ${request.depositStatus === 'Paid' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}`}>
+                                                {request.depositStatus}
+                                            </span>
+                                        )}
+                                    </label>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="number"
+                                            value={request.depositAmount || ''}
+                                            onChange={(e) => setRequest({ ...request, depositAmount: parseFloat(e.target.value) })}
+                                            placeholder="Deposit EGP..."
+                                            className="input-field bg-slate-50 dark:bg-white/5 border-none h-14 px-6 rounded-2xl flex-1 text-sm font-black"
+                                        />
+                                        <button
+                                            onClick={() => handleUpdate({ depositAmount: request.depositAmount, depositStatus: 'Requested' })}
+                                            disabled={updateLoading || !request.depositAmount}
+                                            className="h-14 w-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center active:scale-95 transition-all disabled:opacity-50"
+                                        >
+                                            <Send size={18} />
+                                        </button>
+                                    </div>
+
+                                    {request.depositScreenshot && (
+                                        <div className="mt-4 p-4 rounded-2xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+                                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mb-3">User Proof of Payment</p>
+                                            <div className="aspect-video relative rounded-xl overflow-hidden mb-4 group cursor-pointer" onClick={() => window.open(request.depositScreenshot, '_blank')}>
+                                                <img src={request.depositScreenshot} className="w-full h-full object-cover" />
+                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] font-black uppercase">Click to open</div>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <button
+                                                    onClick={() => handleUpdate({ depositStatus: 'Paid' })}
+                                                    className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 text-[8px] font-black uppercase hover:bg-emerald-500 hover:text-white transition-all"
+                                                >
+                                                    Approve
+                                                </button>
+                                                <button
+                                                    onClick={() => handleUpdate({ depositStatus: 'Rejected' })}
+                                                    className="p-3 rounded-xl bg-red-500/10 text-red-600 text-[8px] font-black uppercase hover:bg-red-500 hover:text-white transition-all"
+                                                >
+                                                    Reject
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
 

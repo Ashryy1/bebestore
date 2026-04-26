@@ -14,6 +14,7 @@ export default function SupportChat() {
     const [newMessage, setNewMessage] = useState('');
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const isAr = lang === 'ar';
@@ -34,8 +35,13 @@ export default function SupportChat() {
 
     useEffect(() => {
         if (isOpen && user) {
+            markAsRead();
             fetchMessages();
-            const interval = setInterval(fetchMessages, 5000); // Poll every 5s
+            const interval = setInterval(fetchMessages, 5000);
+            return () => clearInterval(interval);
+        } else if (user) {
+            // Even if closed, poll for unread count
+            const interval = setInterval(fetchMessages, 10000);
             return () => clearInterval(interval);
         }
     }, [isOpen, user]);
@@ -46,6 +52,15 @@ export default function SupportChat() {
         }
     }, [messages]);
 
+    const markAsRead = async () => {
+        try {
+            await fetch('/api/support', { method: 'PATCH' });
+            setUnreadCount(0);
+        } catch (error) {
+            console.error('Mark read error:', error);
+        }
+    };
+
     const fetchMessages = async () => {
         try {
             setFetching(true);
@@ -53,12 +68,26 @@ export default function SupportChat() {
             if (res.ok) {
                 const data = await res.json();
                 setMessages(data.messages);
+                // Calculate unread from admin
+                const unread = data.messages.filter((m: any) => m.sender === 'admin' && !m.isRead).length;
+                setUnreadCount(unread);
             }
         } catch (error) {
             console.error('Fetch support messages error:', error);
         } finally {
             setFetching(false);
         }
+    };
+
+    const formatMessageDate = (date: string) => {
+        const d = new Date(date);
+        const now = new Date();
+        const diff = now.getTime() - d.getTime();
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+        if (days === 0) return isAr ? 'اليوم' : 'Today';
+        if (days === 1) return isAr ? 'أمس' : 'Yesterday';
+        return d.toLocaleDateString(isAr ? 'ar-EG' : 'en-US', { day: 'numeric', month: 'short' });
     };
 
     const handleSendMessage = async (e: React.FormEvent) => {
@@ -148,24 +177,35 @@ export default function SupportChat() {
                                         </p>
                                     </div>
                                 ) : (
-                                    messages.map((msg, i) => (
-                                        <div
-                                            key={msg._id || i}
-                                            className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                                        >
-                                            <div
-                                                className={`max-w-[80%] p-4 rounded-3xl text-sm font-bold shadow-sm ${msg.sender === 'user'
-                                                    ? 'bg-indigo-600 text-white rounded-br-none shadow-indigo-600/10'
-                                                    : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-bl-none border border-slate-200 dark:border-white/5'
-                                                    }`}
-                                            >
-                                                {msg.content}
-                                                <p className={`text-[8px] mt-2 opacity-50 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
-                                                    {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                </p>
+                                    messages.map((msg, i) => {
+                                        const showDate = i === 0 || formatMessageDate(messages[i - 1].createdAt) !== formatMessageDate(msg.createdAt);
+                                        return (
+                                            <div key={msg._id || i} className="space-y-6">
+                                                {showDate && (
+                                                    <div className="flex justify-center my-4">
+                                                        <span className="px-4 py-1 rounded-full bg-slate-200 dark:bg-white/5 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                                                            {formatMessageDate(msg.createdAt)}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                                <div
+                                                    className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                                                >
+                                                    <div
+                                                        className={`max-w-[80%] p-4 rounded-3xl text-sm font-bold shadow-sm ${msg.sender === 'user'
+                                                            ? 'bg-indigo-600 text-white rounded-br-none shadow-indigo-600/10'
+                                                            : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-bl-none border border-slate-200 dark:border-white/5'
+                                                            }`}
+                                                    >
+                                                        {msg.content}
+                                                        <p className={`text-[8px] mt-2 opacity-50 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
+                                                            {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                        </p>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))
+                                        );
+                                    })
                                 )}
                             </div>
 
@@ -207,6 +247,11 @@ export default function SupportChat() {
                     className="fixed bottom-8 left-8 z-[105] w-16 h-16 rounded-[2rem] bg-indigo-600 text-white shadow-2xl shadow-indigo-600/40 flex items-center justify-center hover:bg-indigo-700 transition-all group pointer-events-auto"
                 >
                     <MessageCircle size={28} className="group-hover:rotate-12 transition-transform" />
+                    {unreadCount > 0 && (
+                        <span className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center text-[10px] font-black animate-bounce shadow-lg">
+                            {unreadCount}
+                        </span>
+                    )}
                     <span className="absolute left-full ml-4 bg-white dark:bg-slate-900 px-4 py-2 rounded-xl text-xs font-black text-slate-900 dark:text-white shadow-xl opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap border border-slate-100 dark:border-white/5">
                         {isAr ? 'تواصل معنا' : 'Chat with us'}
                     </span>

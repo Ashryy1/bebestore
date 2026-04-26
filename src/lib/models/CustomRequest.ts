@@ -26,6 +26,9 @@ export interface ICustomRequest {
         city: string;
         phone: string;
     };
+    depositAmount: number;
+    depositStatus: 'None' | 'Requested' | 'Pending' | 'Paid' | 'Rejected';
+    depositScreenshot?: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -61,6 +64,13 @@ const CustomRequestSchema = new Schema<ICustomRequest>(
             city: { type: String },
             phone: { type: String },
         },
+        depositAmount: { type: Number, default: 0 },
+        depositStatus: {
+            type: String,
+            enum: ['None', 'Requested', 'Pending', 'Paid', 'Rejected'],
+            default: 'None',
+        },
+        depositScreenshot: { type: String },
     },
     { timestamps: true }
 );

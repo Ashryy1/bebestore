@@ -36,3 +36,20 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Failed to send message' }, { status: 500 });
     }
 }
+
+export async function PATCH() {
+    try {
+        const session = await getAuthUser();
+        if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+        await connectDB();
+        await SupportMessage.updateMany(
+            { userId: session.userId, sender: 'admin', isRead: false },
+            { $set: { isRead: true } }
+        );
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        return NextResponse.json({ error: 'Failed to update messages' }, { status: 500 });
+    }
+}

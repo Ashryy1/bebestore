@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { LayoutDashboard, Package, MessageSquare, Tag, Users as UsersIcon, DollarSign, ArrowLeft, LogOut, Menu, X, ShieldCheck, ChevronRight, MessageCircle, ShoppingCart } from 'lucide-react';
+import { LayoutDashboard, Package, Tag, Users as UsersIcon, DollarSign, ArrowLeft, LogOut, Menu, X, ShieldCheck, ChevronRight, MessageCircle, ShoppingCart } from 'lucide-react';
 
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -16,15 +16,35 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     const pathname = usePathname();
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
+    const [supportUnread, setSupportUnread] = useState(0);
+
     const isAr = lang === 'ar';
+
+    useEffect(() => {
+        if (user?.role === 'admin') {
+            fetchUnreadCounts();
+            const interval = setInterval(fetchUnreadCounts, 15000); // Poll every 15s
+            return () => clearInterval(interval);
+        }
+    }, [user]);
+
+    const fetchUnreadCounts = async () => {
+        try {
+            const res = await fetch('/api/admin/support');
+            const data = await res.json();
+            const totalUnreadConversations = data.conversations?.filter((c: any) => c.unreadCount > 0).length || 0;
+            setSupportUnread(totalUnreadConversations);
+        } catch (error) {
+            console.error('Fetch unread error:', error);
+        }
+    };
 
     const sidebarLinks = [
         { href: '/admin', icon: LayoutDashboard, label: t('dashboard') },
         { href: '/admin/products', icon: Package, label: t('products') },
         { href: '/admin/orders', icon: ShoppingCart, label: isAr ? 'الطلبات' : 'Orders' },
         { href: '/admin/categories', icon: Tag, label: t('sections') },
-        { href: '/admin/requests', icon: MessageSquare, label: t('requests') },
-        { href: '/admin/support', icon: MessageCircle, label: isAr ? 'الدعم' : 'Support' },
+        { href: '/admin/support', icon: MessageCircle, label: isAr ? 'الدعم' : 'Support', badge: supportUnread },
         { href: '/admin/users', icon: UsersIcon, label: t('users') },
         { href: '/admin/finance', icon: DollarSign, label: t('finance') },
     ];
@@ -82,6 +102,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                             >
                                 <link.icon size={20} className={isActive ? 'animate-pulse' : 'group-hover:scale-110 transition-transform'} />
                                 {link.label}
+                                {(link.badge ?? 0) > 0 && (
+                                    <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-lg shadow-lg animate-bounce">
+                                        {link.badge}
+                                    </span>
+                                )}
                                 {isActive && (
                                     <motion.div
                                         layoutId="sidebar-active"
@@ -174,13 +199,20 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                                             key={link.href}
                                             href={link.href}
                                             onClick={() => setSidebarOpen(false)}
-                                            className={`flex items-center gap-4 px-6 py-4 rounded-2xl font-black text-sm transition-all ${isActive
+                                            className={`flex items-center justify-between gap-4 px-6 py-4 rounded-2xl font-black text-sm transition-all ${isActive
                                                 ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/20'
                                                 : 'text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-white/5 border border-transparent hover:border-indigo-600/10'
                                                 }`}
                                         >
-                                            <link.icon size={20} />
-                                            {link.label}
+                                            <div className="flex items-center gap-4">
+                                                <link.icon size={20} />
+                                                {link.label}
+                                            </div>
+                                            {(link.badge ?? 0) > 0 && (
+                                                <span className="bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-lg shadow-lg animate-bounce">
+                                                    {link.badge}
+                                                </span>
+                                            )}
                                         </Link>
                                     );
                                 })}
