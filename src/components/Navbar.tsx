@@ -14,6 +14,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '@/context/CartContext';
 import CartDrawer from './CartDrawer';
+import { Package } from 'lucide-react';
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
@@ -42,6 +43,7 @@ export default function Navbar() {
     const navLinks = [
         { href: '/', label: t('home'), icon: Smartphone },
         { href: '/shop', label: t('shop'), icon: ShoppingBag },
+        { href: '/orders', label: t('myOrders'), icon: Package },
         { href: '/custom', label: t('custom'), icon: Palette },
         { href: '/track', label: t('track'), icon: Truck },
     ];
