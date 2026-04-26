@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { LayoutDashboard, Package, MessageSquare, Tag, Users as UsersIcon, DollarSign, ArrowLeft, LogOut, Menu, X, ShieldCheck, ChevronRight, MessageCircle } from 'lucide-react';
+import { LayoutDashboard, Package, MessageSquare, Tag, Users as UsersIcon, DollarSign, ArrowLeft, LogOut, Menu, X, ShieldCheck, ChevronRight, MessageCircle, ShoppingCart } from 'lucide-react';
 
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -21,6 +21,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     const sidebarLinks = [
         { href: '/admin', icon: LayoutDashboard, label: t('dashboard') },
         { href: '/admin/products', icon: Package, label: t('products') },
+        { href: '/admin/orders', icon: ShoppingCart, label: isAr ? 'الطلبات' : 'Orders' },
         { href: '/admin/categories', icon: Tag, label: t('sections') },
         { href: '/admin/requests', icon: MessageSquare, label: t('requests') },
         { href: '/admin/support', icon: MessageCircle, label: isAr ? 'الدعم' : 'Support' },

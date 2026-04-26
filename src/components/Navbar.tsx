@@ -146,21 +146,6 @@ export default function Navbar() {
                                         </div>
                                     </Link>
 
-                                    <div className="w-px h-6 bg-slate-200 dark:bg-slate-700/50 mx-1" />
-
-                                    <div className="flex items-center gap-1 pr-1">
-                                        {user.role === 'admin' && (
-                                            <Link href="/admin" className="p-2 text-indigo-500 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all">
-                                                <LayoutDashboard size={18} />
-                                            </Link>
-                                        )}
-                                        <button
-                                            onClick={logout}
-                                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-all"
-                                        >
-                                            <LogOut size={18} />
-                                        </button>
-                                    </div>
                                 </div>
                             ) : (
                                 <Link href="/auth/login" className="premium-button text-sm py-2.5 px-6">

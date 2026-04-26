@@ -204,10 +204,10 @@ export default function SupportChat() {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setIsOpen(true)}
-                    className="fixed bottom-8 right-8 z-[105] w-16 h-16 rounded-[2rem] bg-indigo-600 text-white shadow-2xl shadow-indigo-600/40 flex items-center justify-center hover:bg-indigo-700 transition-all group pointer-events-auto"
+                    className="fixed bottom-8 left-8 z-[105] w-16 h-16 rounded-[2rem] bg-indigo-600 text-white shadow-2xl shadow-indigo-600/40 flex items-center justify-center hover:bg-indigo-700 transition-all group pointer-events-auto"
                 >
                     <MessageCircle size={28} className="group-hover:rotate-12 transition-transform" />
-                    <span className="absolute right-full mr-4 bg-white dark:bg-slate-900 px-4 py-2 rounded-xl text-xs font-black text-slate-900 dark:text-white shadow-xl opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap border border-slate-100 dark:border-white/5">
+                    <span className="absolute left-full ml-4 bg-white dark:bg-slate-900 px-4 py-2 rounded-xl text-xs font-black text-slate-900 dark:text-white shadow-xl opacity-0 group-hover:opacity-100 transition-all whitespace-nowrap border border-slate-100 dark:border-white/5">
                         {isAr ? 'تواصل معنا' : 'Chat with us'}
                     </span>
                 </motion.button>
