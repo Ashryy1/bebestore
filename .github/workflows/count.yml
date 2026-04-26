@@ -1,0 +1,12 @@
+name: Count Lines
+on: [push, workflow_dispatch]
+jobs:
+  count:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Count lines
+        run: |
+          sudo apt-get install cloc
+          cloc .
+
