@@ -92,15 +92,15 @@ export default function AdminProductsPage() {
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
             >
-                <div className="overflow-x-auto overflow-y-hidden">
-                    <table className="w-full text-left">
+                <div className="overflow-x-auto scrollbar-hide">
+                    <table className="w-full text-start border-collapse">
                         <thead>
                             <tr className="border-b border-slate-50 dark:border-white/5 bg-slate-50/50 dark:bg-white/5">
                                 <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Product</th>
                                 <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Category</th>
                                 <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Price</th>
                                 <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Inventory</th>
-                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-right">Actions</th>
+                                <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 text-end">Actions</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100 dark:divide-white/5">
@@ -153,12 +153,12 @@ export default function AdminProductsPage() {
                                                 <span className="text-sm font-black text-slate-600 dark:text-slate-300">{product.stock} Units</span>
                                             </div>
                                         </td>
-                                        <td className="px-8 py-6 text-right">
+                                        <td className="px-8 py-6 text-end">
                                             <div className="flex items-center justify-end gap-2">
-                                                <Link href={`/shop/${product._id}`} target="_blank" className="p-3 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-400 hover:text-indigo-600 transition-all">
+                                                <Link href={`/shop/${product._id}`} target="_blank" className="p-3 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-400 hover:text-indigo-600 transition-all">
                                                     <Eye size={16} />
                                                 </Link>
-                                                <Link href={`/admin/products/edit/${product._id}`} className="p-3 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-400 hover:text-indigo-600 transition-all">
+                                                <Link href={`/admin/products/edit/${product._id}`} className="p-3 rounded-xl bg-slate-100 dark:bg-white/10 text-slate-400 hover:text-indigo-600 transition-all">
                                                     <Edit2 size={16} />
                                                 </Link>
                                                 <button
@@ -172,19 +172,20 @@ export default function AdminProductsPage() {
                                     </motion.tr>
                                 ))
                             )}
+                            {!loading && filtered.length === 0 && (
+                                <tr>
+                                    <td colSpan={5} className="text-center py-24 bg-slate-50/10 dark:bg-white/5">
+                                        <div className="w-20 h-20 rounded-[2rem] bg-indigo-600/10 flex items-center justify-center mx-auto mb-6">
+                                            <Package size={32} className="text-indigo-600/40" />
+                                        </div>
+                                        <h3 className="text-xl font-black text-slate-900 dark:text-white">No products found</h3>
+                                        <p className="text-slate-400 text-sm font-bold uppercase tracking-widest mt-2 px-6">Adjust your collection search</p>
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
-
-                {!loading && filtered.length === 0 && (
-                    <div className="text-center py-24 bg-slate-50/50 dark:bg-slate-900/50">
-                        <div className="w-20 h-20 rounded-[2rem] bg-indigo-600/5 flex items-center justify-center mx-auto mb-6">
-                            <Package size={32} className="text-indigo-600/20" />
-                        </div>
-                        <h3 className="text-xl font-black text-slate-900 dark:text-white">No products found</h3>
-                        <p className="text-slate-400 text-sm font-bold uppercase tracking-widest mt-2">Adjust your collection search</p>
-                    </div>
-                )}
             </motion.div>
         </div>
     );

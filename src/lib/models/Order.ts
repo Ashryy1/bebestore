@@ -8,10 +8,12 @@ export interface IOrderItem {
     quantity: number;
     price: number;
     image: string;
+    size?: string;
 }
 
 export interface IOrder {
     _id?: string;
+    userId?: string;
     orderNumber: string;
     userName: string;
     userPhone: string;
@@ -28,6 +30,7 @@ export interface IOrder {
 
 const OrderSchema = new Schema<IOrder>(
     {
+        userId: { type: Schema.Types.ObjectId, ref: 'User', index: true },
         orderNumber: { type: String, unique: true, required: true, index: true },
         userName: { type: String, required: true },
         userPhone: { type: String, required: true, index: true },
@@ -38,6 +41,7 @@ const OrderSchema = new Schema<IOrder>(
                 quantity: { type: Number, required: true },
                 price: { type: Number, required: true },
                 image: { type: String },
+                size: { type: String },
             },
         ],
         totalAmount: { type: Number, required: true },

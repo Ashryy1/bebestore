@@ -24,6 +24,8 @@ const translations: Record<Language, Record<string, string>> = {
         register: 'Register',
         admin: 'Dashboard',
         logout: 'Logout',
+        myOrders: 'My Orders',
+        cart: 'Cart',
         heroTitle: 'Beautiful Crochet Made Just for You',
         heroSub: 'From adorable amigurumi to cozy wearables — every stitch tells a story.',
         browse: 'Browse Collection',
@@ -92,13 +94,15 @@ const translations: Record<Language, Record<string, string>> = {
         navigation: 'التنقل',
         store: 'المتجر',
         exit: 'خروج',
+        myOrders: 'طلباتي',
+        cart: 'السلة',
     }
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-    const [lang, setLang] = useState<Language>('ar');
+    const [lang, setLang] = useState<Language>('en');
     const [theme, setTheme] = useState<Theme>('dark'); // Default to dark for "Midnight" experience
     const [mounted, setMounted] = useState(false);
 

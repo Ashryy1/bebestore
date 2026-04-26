@@ -12,12 +12,16 @@ import {
     Scissors, Palette, Truck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useCart } from '@/context/CartContext';
+import CartDrawer from './CartDrawer';
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const { user, logout } = useAuth();
     const { lang, setLang, t, theme, toggleTheme, isDark } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
+    const [cartOpen, setCartOpen] = useState(false);
+    const { totalItems } = useCart();
     const pathname = usePathname();
     const isAdmin = pathname.startsWith('/admin');
 
@@ -122,7 +126,7 @@ export default function Navbar() {
 
                             {user ? (
                                 <div className="flex items-center gap-2 p-1 bg-slate-100/50 dark:bg-slate-800/40 rounded-2xl border border-slate-200/50 dark:border-slate-800/30">
-                                    <Link href="/settings" className="flex items-center gap-3 px-3 py-1.5 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all">
+                                    <Link href="/orders" className="flex items-center gap-3 px-3 py-1.5 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all">
                                         <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-black text-xs shadow-lg shadow-indigo-500/20 overflow-hidden">
                                             {user.image ? (
                                                 <img src={user.image} alt="Profile" className="w-full h-full object-cover" />
@@ -132,7 +136,7 @@ export default function Navbar() {
                                         </div>
                                         <div className="hidden lg:block truncate max-w-[100px]">
                                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 leading-none mb-0.5">
-                                                {user.role === 'admin' ? t('admin') : 'Member'}
+                                                {user.role === 'admin' ? t('admin') : t('myOrders')}
                                             </p>
                                             <p className="text-xs font-bold text-slate-900 dark:text-white leading-none truncate opacity-80">
                                                 {user.name || user.email.split('@')[0]}
@@ -162,6 +166,19 @@ export default function Navbar() {
                                     {t('login')}
                                 </Link>
                             )}
+
+                            {/* Cart Toggle */}
+                            <button
+                                onClick={() => setCartOpen(true)}
+                                className="relative w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center transition-all active:scale-90 hover:bg-slate-200 dark:hover:bg-slate-700"
+                            >
+                                <ShoppingBag size={22} />
+                                {totalItems > 0 && (
+                                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-indigo-600 text-white text-[10px] font-black rounded-full flex items-center justify-center shadow-lg border-2 border-white dark:border-slate-900 animate-in zoom-in">
+                                        {totalItems}
+                                    </span>
+                                )}
+                            </button>
                         </div>
 
                         {/* Mobile Menu Button */}
@@ -313,6 +330,8 @@ export default function Navbar() {
                     </div>
                 )}
             </AnimatePresence>
+
+            <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
         </>
     ) : null;
 }

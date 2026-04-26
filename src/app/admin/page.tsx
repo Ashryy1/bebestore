@@ -96,9 +96,6 @@ export default function AdminDashboard() {
                     </h1>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button className="bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white px-6 py-3 rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-slate-200 transition-colors">
-                        Export Data
-                    </button>
                     <Link href="/admin/products/new" className="premium-button px-6 py-3 rounded-2xl flex items-center gap-2">
                         <Plus size={18} />
                         <span className="text-sm font-black uppercase tracking-widest">New Product</span>
@@ -123,8 +120,8 @@ export default function AdminDashboard() {
                             >
                                 <Link href={stat.link} className="block glass-card rounded-[2rem] p-8 group relative overflow-hidden transition-all duration-500 hover:scale-[1.02]">
                                     <div className={`absolute top-0 right-0 w-32 h-32 blur-[80px] -mr-16 -mt-16 opacity-10 ${stat.color === 'indigo' ? 'bg-indigo-600' :
-                                            stat.color === 'amber' ? 'bg-amber-500' :
-                                                stat.color === 'emerald' ? 'bg-emerald-500' : 'bg-violet-600'
+                                        stat.color === 'amber' ? 'bg-amber-500' :
+                                            stat.color === 'emerald' ? 'bg-emerald-500' : 'bg-violet-600'
                                         }`} />
 
                                     <div className="flex items-center justify-between mb-8">
@@ -160,7 +157,7 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 {/* Recent Activity */}
                 <motion.div
-                    className="lg:col-span-8 glass-card rounded-[2.5rem] p-10"
+                    className="lg:col-span-12 glass-card rounded-[2.5rem] p-10"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
@@ -219,48 +216,6 @@ export default function AdminDashboard() {
                     </div>
                 </motion.div>
 
-                {/* Quick Info / Tips */}
-                <motion.div
-                    className="lg:col-span-4 glass-card rounded-[2.5rem] p-10 bg-indigo-600 text-white relative overflow-hidden"
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.5 }}
-                >
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-[100px] -mr-32 -mt-32" />
-                    <div className="relative z-10 h-full flex flex-col">
-                        <h2 className="text-2xl font-black mb-6 tracking-tight">System Health</h2>
-                        <div className="space-y-8 flex-1">
-                            <div className="flex items-center justify-between group">
-                                <div className="flex items-center gap-3">
-                                    <Activity size={18} className="text-indigo-200" />
-                                    <span className="text-indigo-100 font-bold">API Performance</span>
-                                </div>
-                                <span className="bg-white/20 px-3 py-1 rounded-full font-black text-[10px] uppercase">Excellent</span>
-                            </div>
-                            <div className="flex items-center justify-between group">
-                                <div className="flex items-center gap-3">
-                                    <Zap size={18} className="text-indigo-200" />
-                                    <span className="text-indigo-100 font-bold">Server Load</span>
-                                </div>
-                                <span className="bg-white/20 px-3 py-1 rounded-full font-black text-[10px] uppercase">2.4%</span>
-                            </div>
-                            <div className="flex items-center justify-between group">
-                                <div className="flex items-center gap-3">
-                                    <Package size={18} className="text-indigo-200" />
-                                    <span className="text-indigo-100 font-bold">Database Sync</span>
-                                </div>
-                                <span className="bg-white/20 px-3 py-1 rounded-full font-black text-[10px] uppercase">Live</span>
-                            </div>
-                        </div>
-
-                        <div className="mt-auto p-6 rounded-2xl bg-white/10 border border-white/20">
-                            <h4 className="font-black text-sm uppercase tracking-widest mb-2 leading-tight">Pro Admin Tip</h4>
-                            <p className="text-indigo-100 text-sm font-medium leading-relaxed italic">
-                                "Keep track of your material costs in the Finance hub to see your true net profit in real-time."
-                            </p>
-                        </div>
-                    </div>
-                </motion.div>
             </div>
         </div>
     );

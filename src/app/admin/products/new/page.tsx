@@ -12,7 +12,8 @@ import Link from 'next/link';
 export default function NewProductPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
-    const [images, setImages] = useState<string[]>([]);
+    const [mainImage, setMainImage] = useState<string[]>([]);
+    const [galleryImages, setGalleryImages] = useState<string[]>([]);
     const [sizeChartType, setSizeChartType] = useState<'none' | 'table' | 'image'>('none');
     const [sizeChartImage, setSizeChartImage] = useState<string[]>([]);
     const [sizes, setSizes] = useState([{ label: '', dimensions: '' }]);
@@ -25,6 +26,8 @@ export default function NewProductPage() {
         category: '',
         stock: '',
         featured: false,
+        rating: '5',
+        numReviews: '0',
     });
 
     useEffect(() => {
@@ -56,7 +59,9 @@ export default function NewProductPage() {
             ...form,
             price: parseFloat(form.price),
             stock: parseInt(form.stock) || 0,
-            images,
+            images: [...mainImage, ...galleryImages],
+            rating: parseFloat(form.rating) || 5,
+            numReviews: parseInt(form.numReviews) || 0,
             sizeChart:
                 sizeChartType === 'table'
                     ? { type: 'table', sizes: sizes.filter((s) => s.label && s.dimensions) }
@@ -271,6 +276,33 @@ export default function NewProductPage() {
                                     </select>
                                 </div>
 
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Rating (1-5)</label>
+                                        <input
+                                            type="number"
+                                            step="0.1"
+                                            min="0"
+                                            max="5"
+                                            value={form.rating}
+                                            onChange={(e) => updateForm('rating', e.target.value)}
+                                            placeholder="5.0"
+                                            className="input-field bg-slate-50 dark:bg-white/5 border-none h-14 px-6 rounded-2xl w-full text-sm font-black text-slate-900 dark:text-white"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Review Count</label>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            value={form.numReviews}
+                                            onChange={(e) => updateForm('numReviews', e.target.value)}
+                                            placeholder="0"
+                                            className="input-field bg-slate-50 dark:bg-white/5 border-none h-14 px-6 rounded-2xl w-full text-sm font-black text-slate-900 dark:text-white"
+                                        />
+                                    </div>
+                                </div>
+
                                 <label className="flex items-center gap-4 cursor-pointer group">
                                     <div className="relative">
                                         <input
@@ -287,18 +319,30 @@ export default function NewProductPage() {
                             </div>
                         </motion.div>
 
-                        {/* Gallery */}
+                        {/* Media Management */}
                         <motion.div
                             className="glass-card rounded-[2.5rem] p-8 border border-slate-100 dark:border-white/5 shadow-2xl shadow-black/5"
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.1 }}
                         >
-                            <div className="flex items-center gap-3 mb-6">
-                                <ImageIcon size={18} className="text-purple-500" />
-                                <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Media Library</h2>
+                            <div className="space-y-8">
+                                <div>
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <Sparkles size={18} className="text-amber-500" />
+                                        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Main Cover</h2>
+                                    </div>
+                                    <ImageUpload images={mainImage} onChange={setMainImage} maxFiles={1} />
+                                </div>
+
+                                <div className="pt-8 border-t border-slate-100 dark:border-white/5">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <ImageIcon size={18} className="text-purple-500" />
+                                        <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Additional Gallery</h2>
+                                    </div>
+                                    <ImageUpload images={galleryImages} onChange={setGalleryImages} maxFiles={4} />
+                                </div>
                             </div>
-                            <ImageUpload images={images} onChange={setImages} maxFiles={5} />
                         </motion.div>
 
                         <button

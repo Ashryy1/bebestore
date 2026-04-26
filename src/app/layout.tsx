@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import NotificationPrompt from '@/components/NotificationPrompt';
 
 import { LanguageProvider } from '@/context/LanguageContext';
+import { CartProvider } from '@/context/CartContext';
 
 import SupportChat from '@/components/SupportChat';
 
@@ -13,6 +14,10 @@ export const metadata: Metadata = {
     title: 'BibaStore | بيبا أستور — Premium Handmade Store',
     description: 'Beautiful handmade pieces crafted with love at BibaStore. Custom orders welcome.',
     keywords: ['BibaStore', 'handmade', 'custom', 'premium', 'craft'],
+    icons: {
+        icon: '/logo.png',
+        apple: '/logo.png',
+    },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -24,11 +29,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <body className="min-h-screen flex flex-col antialiased">
                 <LanguageProvider>
                     <AuthProvider>
-                        <Navbar />
-                        <main className="flex-1 pt-20">{children}</main>
-                        <Footer />
-                        <SupportChat />
-                        <NotificationPrompt />
+                        <CartProvider>
+                            <Navbar />
+                            <main className="flex-1 pt-20">{children}</main>
+                            <Footer />
+                            <SupportChat />
+                            <NotificationPrompt />
+                        </CartProvider>
                     </AuthProvider>
                 </LanguageProvider>
             </body>

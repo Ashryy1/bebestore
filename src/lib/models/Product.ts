@@ -14,6 +14,8 @@ export interface IProduct {
         sizes?: Array<{ label: string; dimensions: string }>;
     } | null;
     featured: boolean;
+    rating: number;
+    numReviews: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -43,6 +45,8 @@ const ProductSchema = new Schema<IProduct>(
             ],
         },
         featured: { type: Boolean, default: false },
+        rating: { type: Number, default: 5, min: 0, max: 5 },
+        numReviews: { type: Number, default: 0, min: 0 },
     },
     { timestamps: true }
 );

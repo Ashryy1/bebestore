@@ -7,6 +7,7 @@ import { ArrowLeft, ShoppingCart, Minus, Plus, ShoppingBag, ChevronRight, Heart,
 import Link from 'next/link';
 import SizeChart from '@/components/SizeChart';
 import { useLanguage } from '@/context/LanguageContext';
+import { useCart } from '@/context/CartContext';
 import ProductCard from '@/components/ProductCard';
 
 export default function ProductDetailPage() {
@@ -20,6 +21,8 @@ export default function ProductDetailPage() {
     const [quantity, setQuantity] = useState(1);
     const [activeImage, setActiveImage] = useState(0);
     const [isWishlisted, setIsWishlisted] = useState(false);
+    const [selectedSize, setSelectedSize] = useState<string | null>(null);
+    const { addToCart } = useCart();
 
     useEffect(() => {
         if (id) fetchProductData();
@@ -133,21 +136,7 @@ export default function ProductDetailPage() {
                                     />
                                 </AnimatePresence>
 
-                                {/* Action buttons */}
-                                <div className="absolute top-8 right-8 flex flex-col gap-3">
-                                    <button
-                                        onClick={() => setIsWishlisted(!isWishlisted)}
-                                        className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 backdrop-blur-xl border ${isWishlisted
-                                            ? 'bg-rose-500 text-white border-rose-500 shadow-xl shadow-rose-500/30'
-                                            : 'bg-white/90 dark:bg-slate-950/80 text-slate-500 border-white/20 hover:text-rose-500'
-                                            }`}
-                                    >
-                                        <Heart size={24} fill={isWishlisted ? "currentColor" : "none"} />
-                                    </button>
-                                    <button className="w-14 h-14 rounded-2xl bg-white/90 dark:bg-slate-950/80 backdrop-blur-xl border border-white/20 flex items-center justify-center text-slate-500 hover:text-indigo-500 transition-all">
-                                        <Share2 size={24} />
-                                    </button>
-                                </div>
+                                {/* Action buttons removed as requested */}
                             </div>
                         </motion.div>
                     </div>
@@ -168,10 +157,22 @@ export default function ProductDetailPage() {
                             </h1>
 
                             <div className="flex items-center gap-4 mb-8">
-                                <div className="flex text-amber-500">
-                                    {[1, 2, 3, 4, 5].map(i => <Star key={i} size={18} fill="currentColor" />)}
+                                <div className="flex items-center gap-2">
+                                    <div className="flex text-amber-500">
+                                        {[1, 2, 3, 4, 5].map(i => (
+                                            <Star
+                                                key={i}
+                                                size={18}
+                                                fill={i <= Math.round(product.rating || 5) ? "currentColor" : "none"}
+                                                className={i <= Math.round(product.rating || 5) ? "" : "text-slate-200 dark:text-slate-800"}
+                                            />
+                                        ))}
+                                    </div>
+                                    <span className="text-sm font-black text-slate-900 dark:text-white mt-0.5">{product.rating || 5.0}</span>
                                 </div>
-                                <span className="text-xs font-black text-slate-400 border-l border-slate-200 dark:border-slate-800 pl-4 uppercase tracking-[0.2em]">{isAr ? '٢٤ مراجعة' : '24 Reviews'}</span>
+                                <span className="text-xs font-black text-slate-400 border-l border-slate-200 dark:border-slate-800 pl-4 uppercase tracking-[0.2em]">
+                                    {product.numReviews || 0} {isAr ? 'مراجعة' : 'Reviews'}
+                                </span>
                             </div>
 
                             <div className="flex items-baseline gap-4 mb-10">
@@ -197,6 +198,29 @@ export default function ProductDetailPage() {
                                 </div>
                             </div>
 
+                            {product.sizeChart?.type === 'table' && product.sizeChart.sizes?.length > 0 && (
+                                <div className="mb-10">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Select Size</h3>
+                                        <button className="text-[10px] font-bold text-indigo-600 underline">Size Guide</button>
+                                    </div>
+                                    <div className="flex flex-wrap gap-3">
+                                        {product.sizeChart.sizes.map((s: any) => (
+                                            <button
+                                                key={s.label}
+                                                onClick={() => setSelectedSize(s.label)}
+                                                className={`px-8 py-4 rounded-2xl font-black text-sm transition-all duration-300 border-2 ${selectedSize === s.label
+                                                        ? 'bg-indigo-600 border-indigo-600 text-white shadow-xl shadow-indigo-600/20 scale-105'
+                                                        : 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/5 text-slate-600 dark:text-slate-300 hover:border-slate-200 dark:hover:border-white/10'
+                                                    }`}
+                                            >
+                                                {s.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="section-divider mb-10" />
 
                             <div className="flex flex-col gap-6">
@@ -221,11 +245,15 @@ export default function ProductDetailPage() {
 
                                 <button
                                     className="premium-button text-lg py-5 w-full flex items-center justify-center gap-3"
-                                    disabled={product.stock === 0}
+                                    disabled={product.stock === 0 || (product.sizeChart?.type === 'table' && product.sizeChart.sizes?.length > 0 && !selectedSize)}
+                                    onClick={() => addToCart(product, quantity, selectedSize || undefined)}
                                 >
                                     <ShoppingBag size={24} />
                                     {isAr ? 'إضافة للسلة' : 'Add to Cart'}
                                 </button>
+                                {product.sizeChart?.type === 'table' && product.sizeChart.sizes?.length > 0 && !selectedSize && (
+                                    <p className="text-center text-[10px] font-bold text-rose-500 uppercase tracking-widest mt-2">Please select a size first</p>
+                                )}
 
                                 <div className="space-y-4">
                                     {!product.isOutOfStock && (
