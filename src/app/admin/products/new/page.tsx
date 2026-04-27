@@ -29,6 +29,8 @@ export default function NewProductPage() {
         rating: '5',
         numReviews: '0',
     });
+    const [colorInput, setColorInput] = useState('');
+    const [colors, setColors] = useState<string[]>([]);
 
     useEffect(() => {
         fetch('/api/categories')
@@ -51,6 +53,14 @@ export default function NewProductPage() {
         setSizes(newSizes);
     };
 
+    const addColor = () => {
+        if (colorInput.trim() && !colors.includes(colorInput.trim())) {
+            setColors([...colors, colorInput.trim()]);
+            setColorInput('');
+        }
+    };
+    const removeColor = (color: string) => setColors(colors.filter(c => c !== color));
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -60,6 +70,7 @@ export default function NewProductPage() {
             price: parseFloat(form.price),
             stock: parseInt(form.stock) || 0,
             images: [...mainImage, ...galleryImages],
+            colors,
             rating: parseFloat(form.rating) || 5,
             numReviews: parseInt(form.numReviews) || 0,
             sizeChart:
@@ -222,6 +233,42 @@ export default function NewProductPage() {
                                     <ImageUpload images={sizeChartImage} onChange={setSizeChartImage} maxFiles={1} />
                                 </div>
                             )}
+
+                            <div className="pt-8 border-t border-slate-100 dark:border-white/5 mt-8">
+                                <div className="flex items-center gap-3 mb-8">
+                                    <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                                        <Sparkles size={20} className="text-purple-500" />
+                                    </div>
+                                    <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Available Colors</h2>
+                                </div>
+                                <div className="flex gap-2 mb-4">
+                                    <input
+                                        type="text"
+                                        value={colorInput}
+                                        onChange={(e) => setColorInput(e.target.value)}
+                                        placeholder="Add color (e.g. Red, Blue)..."
+                                        className="input-field bg-slate-50 dark:bg-white/5 border-none h-12 px-6 rounded-xl flex-1 text-sm"
+                                        onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addColor())}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={addColor}
+                                        className="px-6 rounded-xl bg-indigo-600 text-white text-[10px] font-black uppercase"
+                                    >
+                                        Add
+                                    </button>
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {colors.map(color => (
+                                        <div key={color} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-white/5 text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-300">
+                                            {color}
+                                            <button type="button" onClick={() => removeColor(color)} className="text-red-500 hover:text-red-600">
+                                                <X size={14} />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         </motion.div>
                     </div>
 
@@ -266,12 +313,12 @@ export default function NewProductPage() {
                                     <select
                                         value={form.category}
                                         onChange={(e) => updateForm('category', e.target.value)}
-                                        className="input-field bg-slate-50 dark:bg-white/5 border-none h-14 px-6 rounded-2xl w-full text-sm font-black text-slate-900 dark:text-white"
+                                        className="input-field bg-slate-50 dark:bg-slate-800 border-none h-14 px-6 rounded-2xl w-full text-sm font-black text-slate-900 dark:text-white"
                                         required
                                     >
-                                        <option value="" disabled className="bg-white dark:bg-slate-900">Select Category</option>
+                                        <option value="" disabled className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Select Category</option>
                                         {(Array.isArray(categories) ? categories : []).map((c) => (
-                                            <option key={c._id} value={c.slug} className="bg-white dark:bg-slate-900">{c.name}</option>
+                                            <option key={c._id} value={c.slug} className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">{c.name}</option>
                                         ))}
                                     </select>
                                 </div>

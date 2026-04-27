@@ -3,10 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ShoppingBag, Clock, Package, Truck, CheckCircle, Copy, Loader2, MessageCircle } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Clock, Package, Truck, CheckCircle, Copy, Loader2, MessageCircle, DollarSign, Upload, ShieldCheck, X } from 'lucide-react';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import { ADMIN_WHATSAPP } from '@/lib/utils';
+import OrderChat from '@/components/OrderChat';
+import ImageUpload from '@/components/ImageUpload';
 
 export default function OrderDetailPage() {
     const { id } = useParams();
@@ -38,6 +40,19 @@ export default function OrderDetailPage() {
             console.error('Fetch order error:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleUploadReceipt = async (image: string) => {
+        try {
+            const res = await fetch(`/api/orders/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ depositScreenshot: image }),
+            });
+            if (res.ok) fetchOrder();
+        } catch (error) {
+            console.error('Upload receipt error:', error);
         }
     };
 
@@ -118,8 +133,16 @@ export default function OrderDetailPage() {
                                 <div className="flex-1">
                                     <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-1">{item.title}</h3>
                                     <p className="text-sm text-slate-500 font-medium">
-                                        {isAr ? 'الكمية:' : 'Qty:'} {item.quantity} • {item.price} ج.م
+                                        {isAr ? 'الكمية:' : 'Qty:'} {item.quantity}
+                                        {item.size && ` • ${isAr ? 'المقاس:' : 'Size:'} ${item.size}`}
+                                        {item.color && ` • ${isAr ? 'اللون:' : 'Color:'} ${item.color}`}
+                                        • {item.price} ج.م
                                     </p>
+                                    {item.note && (
+                                        <p className="text-[10px] text-slate-400 italic mt-1">
+                                            {isAr ? 'ملاحظة:' : 'Note:'} {item.note}
+                                        </p>
+                                    )}
                                 </div>
                                 <div className="text-right">
                                     <p className="text-xl font-black text-indigo-600 dark:text-indigo-400">
@@ -138,6 +161,79 @@ export default function OrderDetailPage() {
                         <ShoppingBag size={40} className="opacity-20" />
                     </div>
                 </motion.div>
+
+                {/* Deposit Tracker */}
+                {order.depositStatus !== 'None' && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="glass-card rounded-[3rem] p-8 md:p-12 mb-8 border-l-4 border-amber-500"
+                    >
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
+                                <DollarSign size={24} />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-black text-slate-900 dark:text-white leading-none">
+                                    {isAr ? 'تأكيد العربون' : 'Deposit Confirmation'}
+                                </h3>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">
+                                    {isAr ? 'حالة الدفع:' : 'Payment Status:'} {order.depositStatus}
+                                </p>
+                            </div>
+                        </div>
+
+                        {order.depositStatus === 'Requested' && (
+                            <div className="space-y-6">
+                                <div className="p-6 rounded-2xl bg-amber-500/5 text-amber-700 text-sm font-bold">
+                                    {isAr ? (
+                                        `يرجى تحويل ${order.depositAmount} ج.م إلى رقم محفظة فودافون كاش الخاص بنا، ثم قم برفع لقطة شاشة للتحويل هنا.`
+                                    ) : (
+                                        `Please transfer EGP ${order.depositAmount} to our Vodafone Cash wallet, then upload the translation screenshot here.`
+                                    )}
+                                </div>
+                                <ImageUpload
+                                    images={[]}
+                                    onChange={(images) => images[0] && handleUploadReceipt(images[0])}
+                                    maxFiles={1}
+                                />
+                            </div>
+                        )}
+
+                        {order.depositStatus === 'Pending' && (
+                            <div className="flex items-center gap-4 p-6 rounded-2xl bg-indigo-500/5 text-indigo-600 font-bold">
+                                <Clock size={20} className="animate-spin" />
+                                <span>{isAr ? 'جاري مراجعة إيصال الدفع من قبل الإدارة...' : 'Reviewing payment proof by administration...'}</span>
+                            </div>
+                        )}
+
+                        {order.depositStatus === 'Paid' && (
+                            <div className="flex items-center gap-4 p-6 rounded-2xl bg-emerald-500/5 text-emerald-600 font-bold">
+                                <ShieldCheck size={20} />
+                                <span>{isAr ? 'تم تأكيد دفع العربون بنجاح!' : 'Deposit payment confirmed successfully!'}</span>
+                            </div>
+                        )}
+
+                        {order.depositStatus === 'Rejected' && (
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-4 p-6 rounded-2xl bg-red-500/5 text-red-600 font-bold">
+                                    <X size={20} />
+                                    <span>{isAr ? 'عذراً، تم رفض الإيصال. يرجى المحاولة مرة أخرى أو التواصل معنا.' : 'Sorry, the proof was rejected. Please try again or contact us.'}</span>
+                                </div>
+                                <ImageUpload
+                                    images={[]}
+                                    onChange={(images) => images[0] && handleUploadReceipt(images[0])}
+                                    maxFiles={1}
+                                />
+                            </div>
+                        )}
+                    </motion.div>
+                )}
+
+                {/* Specific Order Chat */}
+                <div className="mb-8">
+                    <OrderChat orderId={id as string} isChatOpen={order.isChatOpen} isAdmin={false} />
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="glass-card rounded-[2.5rem] p-8">

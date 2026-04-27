@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { ShoppingCart, Clock, CheckCircle, Package, Search, Filter, Loader2, ChevronRight, User, MessageCircle } from 'lucide-react';
@@ -17,6 +18,7 @@ const statusConfig: Record<OrderStatus, { color: string; bg: string; dot: string
 };
 
 export default function AdminOrdersPage() {
+    const router = useRouter();
     const { lang } = useLanguage();
     const isAr = lang === 'ar';
     const [orders, setOrders] = useState<any[]>([]);
@@ -134,7 +136,8 @@ export default function AdminOrdersPage() {
                                 animate={{ opacity: 1, scale: 1 }}
                                 exit={{ opacity: 0, scale: 0.95 }}
                                 transition={{ delay: i * 0.05 }}
-                                className="glass-card rounded-[2.5rem] p-8 border border-slate-100 dark:border-white/5 relative group hover:shadow-2xl hover:shadow-black/5 transition-all duration-500"
+                                onClick={() => router.push(order.source === 'custom' ? `/admin/requests/${order._id}` : `/admin/orders/${order._id}`)}
+                                className="glass-card rounded-[2.5rem] p-8 border border-slate-100 dark:border-white/5 relative group hover:shadow-2xl hover:shadow-black/5 transition-all duration-500 cursor-pointer"
                             >
                                 <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
                                     <div className="flex items-center gap-6">
@@ -144,7 +147,7 @@ export default function AdminOrdersPage() {
                                         <div>
                                             <div className="flex items-center gap-3 mb-2">
                                                 <h3 className="text-xl font-black tracking-tight text-slate-900 dark:text-white">#{order.orderNumber}</h3>
-                                                <div className="flex gap-2">
+                                                <div className="flex flex-wrap gap-2">
                                                     <span className={`px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border border-current ${statusConfig[order.status as OrderStatus]?.bg || 'bg-slate-500/5'} ${statusConfig[order.status as OrderStatus]?.color || 'text-slate-500'}`}>
                                                         {order.status}
                                                     </span>
@@ -176,38 +179,8 @@ export default function AdminOrdersPage() {
                                             <p className="text-2xl font-black text-indigo-600 dark:text-indigo-400">{order.totalAmount.toLocaleString()} EGP</p>
                                         </div>
 
-                                        <div className="flex flex-col gap-2">
-                                            <select
-                                                value={order.status}
-                                                onChange={(e) => updateOrderStatus(order._id, e.target.value)}
-                                                className="bg-slate-100 dark:bg-white/5 border-none text-[10px] font-black uppercase tracking-widest px-4 py-2 rounded-xl focus:ring-0 cursor-pointer"
-                                            >
-                                                <option value="Pending">Pending</option>
-                                                <option value="Shipped">Shipped</option>
-                                                <option value="Completed">Completed</option>
-                                                <option value="Cancelled">Cancelled</option>
-                                            </select>
-                                            <div className="flex items-center gap-2">
-                                                <Link
-                                                    href={order.source === 'custom' ? `/admin/requests/${order._id}` : `/admin/orders/${order._id}`}
-                                                    className="flex-1 text-center text-[8px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-colors"
-                                                >
-                                                    View
-                                                </Link>
-                                                {order.isWhatsAppOrder && (
-                                                    <button
-                                                        onClick={() => {
-                                                            const msg = encodeURIComponent(`مرحباً ${order.userName}، بخصوص طلبك رقم #${order.orderNumber}، الحالة هي: [${order.status}]`);
-                                                            const phone = formatWhatsAppNumber(order.userPhone);
-                                                            window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
-                                                        }}
-                                                        className="p-1 px-2 rounded-lg bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all"
-                                                        title="Share Update"
-                                                    >
-                                                        <MessageCircle size={10} />
-                                                    </button>
-                                                )}
-                                            </div>
+                                        <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-slate-100 dark:bg-white/5 text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all">
+                                            <ChevronRight size={20} className={isAr ? 'rotate-180' : ''} />
                                         </div>
                                     </div>
                                 </div>

@@ -152,12 +152,12 @@ export default function AdminFinancePage() {
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Type</label>
                                 <select
-                                    className="input-field w-full h-14 bg-slate-50 dark:bg-white/5 border-none rounded-2xl px-6 font-bold text-slate-900 dark:text-white"
+                                    className="input-field w-full h-14 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl px-6 font-bold text-slate-900 dark:text-white"
                                     value={form.type}
                                     onChange={e => setForm({ ...form, type: e.target.value as any })}
                                 >
-                                    <option value="expense" className="bg-white dark:bg-slate-900">Expense (-)</option>
-                                    <option value="income" className="bg-white dark:bg-slate-900">Income (+)</option>
+                                    <option value="expense" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Expense (-)</option>
+                                    <option value="income" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Income (+)</option>
                                 </select>
                             </div>
 

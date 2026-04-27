@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Package, ArrowLeft, User, Phone, MapPin, Calendar, CreditCard, ShoppingBag, Clock, CheckCircle, Truck, XCircle, Loader2, DollarSign, MessageCircle } from 'lucide-react';
+import { Package, ArrowLeft, User, Phone, MapPin, Calendar, CreditCard, ShoppingBag, Clock, CheckCircle, Truck, XCircle, Loader2, DollarSign, MessageCircle, Lock, Unlock } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 import { formatWhatsAppNumber } from '@/lib/utils';
+import OrderChat from '@/components/OrderChat';
 
 export default function OrderDetailPage() {
     const { id } = useParams();
@@ -29,6 +30,21 @@ export default function OrderDetailPage() {
             console.error('Fetch order error:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const updateOrderStatus = async (status: string) => {
+        try {
+            const res = await fetch(`/api/orders/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status })
+            });
+            if (res.ok) {
+                fetchOrder();
+            }
+        } catch (error) {
+            console.error('Update status error:', error);
         }
     };
 
@@ -57,7 +73,16 @@ export default function OrderDetailPage() {
                     <div className="flex items-center gap-4 mt-2">
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Placed on {new Date(order.createdAt).toLocaleString()}</span>
                         <div className="w-1 h-1 rounded-full bg-slate-200 dark:bg-white/10" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-indigo-500">{order.status}</span>
+                        <select
+                            value={order.status}
+                            onChange={(e) => updateOrderStatus(e.target.value)}
+                            className="bg-slate-100 dark:bg-slate-800 border-none text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-xl focus:ring-0 cursor-pointer text-indigo-500"
+                        >
+                            <option value="Pending" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Pending</option>
+                            <option value="Shipped" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Shipped</option>
+                            <option value="Completed" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Completed</option>
+                            <option value="Cancelled" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Cancelled</option>
+                        </select>
                         {order.isWhatsAppOrder && (
                             <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
                                 <MessageCircle size={10} />
@@ -85,13 +110,24 @@ export default function OrderDetailPage() {
                                         </div>
                                         <div>
                                             <h3 className="font-black text-slate-900 dark:text-white uppercase tracking-tight">{item.title}</h3>
-                                            <div className="flex items-center gap-3 mt-1">
+                                            <div className="flex flex-wrap items-center gap-3 mt-1">
                                                 <span className="text-xs font-bold text-slate-400">Qty: {item.quantity}</span>
                                                 {item.size && (
                                                     <>
                                                         <div className="w-1 h-1 rounded-full bg-slate-200 dark:bg-white/10" />
                                                         <span className="text-xs font-black text-indigo-500 uppercase">Size: {item.size}</span>
                                                     </>
+                                                )}
+                                                {item.color && (
+                                                    <>
+                                                        <div className="w-1 h-1 rounded-full bg-slate-200 dark:bg-white/10" />
+                                                        <span className="text-xs font-black text-purple-500 uppercase">Color: {item.color}</span>
+                                                    </>
+                                                )}
+                                                {item.note && (
+                                                    <div className="w-full mt-2 p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
+                                                        <p className="text-[10px] font-bold text-slate-500 italic">Note: {item.note}</p>
+                                                    </div>
                                                 )}
                                             </div>
                                         </div>
@@ -199,6 +235,41 @@ export default function OrderDetailPage() {
                                 </div>
                             )}
                         </div>
+                    </div>
+
+                    {/* Order Specific Chat Section */}
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between px-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-indigo-600/10 text-indigo-600 flex items-center justify-center text-indigo-600">
+                                    <MessageCircle size={20} />
+                                </div>
+                                <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Order Discussion</h2>
+                            </div>
+                            <button
+                                onClick={async () => {
+                                    const res = await fetch(`/api/orders/${id}`, {
+                                        method: 'PUT',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ isChatOpen: !order.isChatOpen })
+                                    });
+                                    if (res.ok) fetchOrder();
+                                }}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${order.isChatOpen
+                                    ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500 hover:text-white'
+                                    : 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white'
+                                    }`}
+                            >
+                                {order.isChatOpen ? <Lock size={14} /> : <Unlock size={14} />}
+                                {order.isChatOpen ? 'Close Chat' : 'Open Chat'}
+                            </button>
+                        </div>
+                        <OrderChat
+                            orderId={id as string}
+                            isChatOpen={order.isChatOpen}
+                            isAdmin={true}
+                            customerName={order.userName}
+                        />
                     </div>
                 </div>
 

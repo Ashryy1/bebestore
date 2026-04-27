@@ -7,6 +7,7 @@ export interface IProduct {
     price: number;
     images: string[];
     category: string;
+    colors: string[];
     stock: number;
     sizeChart: {
         type: 'table' | 'image';
@@ -30,6 +31,7 @@ const ProductSchema = new Schema<IProduct>(
             type: String,
             required: true,
         },
+        colors: [{ type: String }],
         stock: { type: Number, default: 0, min: 0 },
         sizeChart: {
             type: {

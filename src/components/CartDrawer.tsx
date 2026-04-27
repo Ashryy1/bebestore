@@ -91,13 +91,19 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                             {item.size && (
                                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Size: {item.size}</p>
                                             )}
+                                            {item.color && (
+                                                <p className="text-[10px] font-black text-purple-500 uppercase tracking-widest mb-1">Color: {item.color}</p>
+                                            )}
+                                            {item.note && (
+                                                <p className="text-[10px] text-slate-400 italic mb-1 line-clamp-1 truncate">Note: {item.note}</p>
+                                            )}
                                             <p className="text-xs font-black text-indigo-600 dark:text-indigo-400 mb-4">
                                                 {item.price.toLocaleString()} {isAr ? 'ج.م' : 'EGP'}
                                             </p>
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-100 dark:border-white/5">
                                                     <button
-                                                        onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)}
+                                                        onClick={() => updateQuantity(item.id, item.size, item.color, item.note, item.quantity - 1)}
                                                         className="p-2 text-slate-400 hover:text-indigo-600"
                                                     >
                                                         <Minus size={14} />
@@ -106,14 +112,14 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
                                                         {item.quantity}
                                                     </span>
                                                     <button
-                                                        onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)}
+                                                        onClick={() => updateQuantity(item.id, item.size, item.color, item.note, item.quantity + 1)}
                                                         className="p-2 text-slate-400 hover:text-indigo-600"
                                                     >
                                                         <Plus size={14} />
                                                     </button>
                                                 </div>
                                                 <button
-                                                    onClick={() => removeFromCart(item.id, item.size)}
+                                                    onClick={() => removeFromCart(item.id, item.size, item.color, item.note)}
                                                     className="p-2 text-slate-300 hover:text-red-500 transition-colors"
                                                 >
                                                     <Trash2 size={16} />

@@ -57,6 +57,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
             request.hasUnreadUpdate = body.hasUnreadUpdate;
         }
 
+        if (body.isChatOpen !== undefined) {
+            request.isChatOpen = body.isChatOpen;
+        }
+
         await request.save();
 
         return NextResponse.json({ request });
@@ -125,9 +129,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         }
 
         // Update deposit fields
-        if (body.depositAmount !== undefined) request.depositAmount = body.depositAmount;
-        if (body.depositStatus !== undefined) request.depositStatus = body.depositStatus;
         if (body.depositScreenshot !== undefined) request.depositScreenshot = body.depositScreenshot;
+        if (body.isChatOpen !== undefined) request.isChatOpen = body.isChatOpen;
 
         request.hasUnreadUpdate = true;
 

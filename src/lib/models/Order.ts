@@ -9,6 +9,8 @@ export interface IOrderItem {
     price: number;
     image: string;
     size?: string;
+    color?: string;
+    note?: string;
 }
 
 export interface IOrder {
@@ -31,6 +33,7 @@ export interface IOrder {
     updatedAt: Date;
     hasUnreadUpdate?: boolean;
     isWhatsAppOrder?: boolean;
+    isChatOpen?: boolean;
 }
 
 const OrderSchema = new Schema<IOrder>(
@@ -47,6 +50,8 @@ const OrderSchema = new Schema<IOrder>(
                 price: { type: Number, required: true },
                 image: { type: String },
                 size: { type: String },
+                color: { type: String },
+                note: { type: String },
             },
         ],
         totalAmount: { type: Number, required: true },
@@ -68,6 +73,7 @@ const OrderSchema = new Schema<IOrder>(
         depositScreenshot: { type: String },
         hasUnreadUpdate: { type: Boolean, default: false },
         isWhatsAppOrder: { type: Boolean, default: false },
+        isChatOpen: { type: Boolean, default: true },
     },
     { timestamps: true }
 );

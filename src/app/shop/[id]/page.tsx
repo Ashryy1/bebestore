@@ -24,6 +24,8 @@ export default function ProductDetailPage() {
     const [activeImage, setActiveImage] = useState(0);
     const [isWishlisted, setIsWishlisted] = useState(false);
     const [selectedSize, setSelectedSize] = useState<string | null>(null);
+    const [selectedColor, setSelectedColor] = useState<string | null>(null);
+    const [customNote, setCustomNote] = useState('');
     const { addToCart } = useCart();
     const { user } = useAuth();
 
@@ -224,6 +226,39 @@ export default function ProductDetailPage() {
                                 </div>
                             )}
 
+                            {product.colors?.length > 0 && (
+                                <div className="mb-10">
+                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Select Color</h3>
+                                    <div className="flex flex-wrap gap-3">
+                                        {product.colors.map((c: string) => (
+                                            <button
+                                                key={c}
+                                                onClick={() => setSelectedColor(c)}
+                                                className={`px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all duration-300 border-2 ${selectedColor === c
+                                                    ? 'bg-indigo-600 border-indigo-600 text-white shadow-xl shadow-indigo-600/20 scale-105'
+                                                    : 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/5 text-slate-600 dark:text-slate-300 hover:border-slate-200 dark:hover:border-white/10'
+                                                    }`}
+                                            >
+                                                {c}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="mb-10">
+                                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">
+                                    {isAr ? 'ملاحظات إضافية' : 'Custom Note'}
+                                </h3>
+                                <textarea
+                                    value={customNote}
+                                    onChange={(e) => setCustomNote(e.target.value)}
+                                    placeholder={isAr ? 'مثلاً: تغيير اللون، إضافة اسم...' : 'e.g. Change flower color, add name...'}
+                                    className="w-full bg-slate-50 dark:bg-white/5 border-2 border-transparent focus:border-indigo-600/20 rounded-[1.5rem] p-6 text-sm font-bold text-slate-900 dark:text-white transition-all outline-none resize-none"
+                                    rows={3}
+                                />
+                            </div>
+
                             <div className="section-divider mb-10" />
 
                             <div className="flex flex-col gap-6">
@@ -248,14 +283,17 @@ export default function ProductDetailPage() {
 
                                 <button
                                     className="premium-button text-lg py-5 w-full flex items-center justify-center gap-3"
-                                    disabled={product.stock === 0 || (product.sizeChart?.type === 'table' && product.sizeChart.sizes?.length > 0 && !selectedSize)}
-                                    onClick={() => addToCart(product, quantity, selectedSize || undefined)}
+                                    disabled={product.stock === 0 || (product.sizeChart?.type === 'table' && product.sizeChart.sizes?.length > 0 && !selectedSize) || (product.colors?.length > 0 && !selectedColor)}
+                                    onClick={() => addToCart(product, quantity, selectedSize || undefined, selectedColor || undefined, customNote || undefined)}
                                 >
                                     <ShoppingBag size={24} />
                                     {isAr ? 'إضافة للسلة' : 'Add to Cart'}
                                 </button>
                                 {product.sizeChart?.type === 'table' && product.sizeChart.sizes?.length > 0 && !selectedSize && (
-                                    <p className="text-center text-[10px] font-bold text-rose-500 uppercase tracking-widest mt-2">Please select a size first</p>
+                                    <p className="text-center text-[10px] font-bold text-rose-500 uppercase tracking-widest mt-2 px-6">Please select a size first</p>
+                                )}
+                                {product.colors?.length > 0 && !selectedColor && (
+                                    <p className="text-center text-[10px] font-bold text-rose-500 uppercase tracking-widest mt-2 px-6">Please select a color first</p>
                                 )}
 
                                 <div className="space-y-4">
@@ -302,7 +340,10 @@ export default function ProductDetailPage() {
                                                             title: product.title,
                                                             quantity,
                                                             price: product.price,
-                                                            image: product.images?.[0]
+                                                            image: product.images?.[0],
+                                                            size: selectedSize || undefined,
+                                                            color: selectedColor || undefined,
+                                                            note: customNote || undefined
                                                         }],
                                                         totalAmount: product.price * quantity
                                                     })
@@ -312,8 +353,8 @@ export default function ProductDetailPage() {
 
                                                 const message = encodeURIComponent(
                                                     isAr
-                                                        ? `طلب جديد رقم #${orderNo}\nالمنتج: ${product.title}\nالعدد: ${quantity}\nالإجمالي: ${product.price * quantity} ج.م`
-                                                        : `New Order #${orderNo}\nProduct: ${product.title}\nQty: ${quantity}\nTotal: ${product.price * quantity} EGP`
+                                                        ? `طلب جديد رقم #${orderNo}\nالمنتج: ${product.title}\nالعدد: ${quantity}\nالحجم: ${selectedSize || 'N/A'}\nاللون: ${selectedColor || 'N/A'}\nالملاحظات: ${customNote || 'N/A'}\nالإجمالي: ${product.price * quantity} ج.م`
+                                                        : `New Order #${orderNo}\nProduct: ${product.title}\nQty: ${quantity}\nSize: ${selectedSize || 'N/A'}\nColor: ${selectedColor || 'N/A'}\nNote: ${customNote || 'N/A'}\nTotal: ${product.price * quantity} EGP`
                                                 );
                                                 window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${message}`, '_blank');
                                             } catch (error) {

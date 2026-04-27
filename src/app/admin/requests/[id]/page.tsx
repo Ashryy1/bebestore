@@ -5,8 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Timeline from '@/components/Timeline';
-import { ArrowLeft, Send, DollarSign, CheckCircle2, User, Clock, MessageCircle, AlertCircle, Phone, MapPin, Loader2, Package } from 'lucide-react';
+import { ArrowLeft, Send, DollarSign, CheckCircle2, User, Clock, MessageCircle, AlertCircle, Phone, MapPin, Loader2, Package, Lock, Unlock } from 'lucide-react';
 import { formatWhatsAppNumber } from '@/lib/utils';
+import OrderChat from '@/components/OrderChat';
 
 type Status = 'Pending' | 'Reviewing' | 'Pricing' | 'Processing' | 'Shipped' | 'Completed' | 'Returned';
 
@@ -72,7 +73,7 @@ export default function AdminRequestDetailPage() {
 
     const handleWhatsApp = () => {
         if (!request?.userPhone) return;
-        const msg = encodeURIComponent(`مرحباً ${request.userName}، تواصلنا معك بخصوص طلب الكروشيه الخاص بك...`);
+        const msg = encodeURIComponent(`مرحباً ${request.userName}، بخصوص طلب الكروشيه الخاص بك، الحالة الحالية هي: [${request.status}].`);
         const formattedPhone = formatWhatsAppNumber(request.userPhone);
         window.open(`https://wa.me/${formattedPhone}?text=${msg}`, '_blank');
     };
@@ -308,6 +309,34 @@ export default function AdminRequestDetailPage() {
                                     )}
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Order Specific Chat Section */}
+                        <div className="glass-card rounded-[2.5rem] p-8 border border-slate-100 dark:border-white/5 space-y-6">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-indigo-600/10 flex items-center justify-center">
+                                        <MessageCircle size={20} className="text-indigo-600" />
+                                    </div>
+                                    <h2 className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">Discussion</h2>
+                                </div>
+                                <button
+                                    onClick={() => handleUpdate({ isChatOpen: !request.isChatOpen })}
+                                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${request.isChatOpen
+                                            ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500 hover:text-white'
+                                            : 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white'
+                                        }`}
+                                >
+                                    {request.isChatOpen ? <Lock size={14} /> : <Unlock size={14} />}
+                                    {request.isChatOpen ? 'Close Chat' : 'Open Chat'}
+                                </button>
+                            </div>
+                            <OrderChat
+                                orderId={id as string}
+                                isChatOpen={request.isChatOpen}
+                                isAdmin={true}
+                                customerName={request.userName}
+                            />
                         </div>
                     </div>
 

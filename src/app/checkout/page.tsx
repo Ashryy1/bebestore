@@ -46,7 +46,10 @@ export default function CheckoutPage() {
                         title: item.title,
                         quantity: item.quantity,
                         price: item.price,
-                        image: item.image
+                        image: item.image,
+                        size: item.size,
+                        color: item.color,
+                        note: item.note
                     })),
                     totalAmount: totalPrice,
                     shippingDetails: {
@@ -202,7 +205,12 @@ export default function CheckoutPage() {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="font-bold text-slate-900 dark:text-white text-sm truncate uppercase tracking-tighter">{item.title}</p>
-                                            <p className="text-xs text-slate-400 font-bold">Qty: {item.quantity}</p>
+                                            <p className="text-[8px] text-slate-400 font-bold uppercase tracking-widest mt-1">
+                                                Qty: {item.quantity}
+                                                {item.size && ` • Size: ${item.size}`}
+                                                {item.color && ` • Color: ${item.color}`}
+                                            </p>
+                                            {item.note && <p className="text-[8px] text-indigo-500 italic font-bold truncate">Note: {item.note}</p>}
                                         </div>
                                         <p className="font-black text-sm text-slate-900 dark:text-white">{(item.price * item.quantity).toLocaleString()}</p>
                                     </div>

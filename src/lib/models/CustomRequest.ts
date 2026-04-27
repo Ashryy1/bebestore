@@ -32,6 +32,7 @@ export interface ICustomRequest {
     createdAt: Date;
     updatedAt: Date;
     hasUnreadUpdate?: boolean;
+    isChatOpen?: boolean;
 }
 
 const TimelineEntrySchema = new Schema<ITimelineEntry>(
@@ -73,6 +74,7 @@ const CustomRequestSchema = new Schema<ICustomRequest>(
         },
         depositScreenshot: { type: String },
         hasUnreadUpdate: { type: Boolean, default: false },
+        isChatOpen: { type: Boolean, default: true },
     },
     { timestamps: true }
 );

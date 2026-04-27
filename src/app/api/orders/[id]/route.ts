@@ -44,6 +44,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         if (body.depositAmount !== undefined) order.depositAmount = body.depositAmount;
         if (body.depositStatus !== undefined) order.depositStatus = body.depositStatus;
         if (body.depositScreenshot !== undefined) order.depositScreenshot = body.depositScreenshot;
+        if (body.isChatOpen !== undefined) order.isChatOpen = body.isChatOpen;
 
         order.hasUnreadUpdate = true;
 
@@ -76,6 +77,10 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
         if (hasUnreadUpdate !== undefined) {
             order.hasUnreadUpdate = hasUnreadUpdate;
+        }
+
+        if (body.isChatOpen !== undefined) {
+            order.isChatOpen = body.isChatOpen;
         }
 
         await order.save();
