@@ -3,6 +3,7 @@ import { connectDB } from '@/lib/db';
 import { Product } from '@/lib/models/Product';
 import { CustomRequest } from '@/lib/models/CustomRequest';
 import { Finance } from '@/lib/models/Finance';
+import { Order } from '@/lib/models/Order';
 import { User } from '@/lib/models/User';
 import { requireAdmin } from '@/lib/auth';
 
@@ -23,18 +24,25 @@ export async function GET() {
             });
         }
 
-        const [totalProducts, pendingRequests, financeRecords, totalCustomers] = await Promise.all([
+        const [totalProducts, pendingRequests, financeRecords, totalCustomers, orders, customRequests] = await Promise.all([
             Product.countDocuments().catch(() => 0),
             CustomRequest.countDocuments({ status: 'Pending' }).catch(() => 0),
             Finance.find().lean().catch(() => []),
-            User.countDocuments({ role: 'user' }).catch(() => 0)
+            User.countDocuments({ role: 'user' }).catch(() => 0),
+            Order.find({ status: 'Completed' }).lean().catch(() => []),
+            CustomRequest.find({ status: 'Completed' }).lean().catch(() => [])
         ]);
 
-        const revenue = (financeRecords as any[]).reduce((acc, curr) => {
+        const manualRevenue = (financeRecords as any[]).reduce((acc, curr) => {
             if (curr.type === 'income') return acc + curr.amount;
-            if (curr.type === 'expense' && curr.category === 'return') return acc - curr.amount;
+            if (curr.type === 'expense') return acc - curr.amount;
             return acc;
         }, 0);
+
+        const orderRevenue = (orders as any[]).reduce((acc, curr) => acc + (curr.totalAmount || 0), 0);
+        const requestRevenue = (customRequests as any[]).reduce((acc, curr) => acc + (curr.adminQuote || 0), 0);
+
+        const revenue = manualRevenue + orderRevenue + requestRevenue;
 
         return NextResponse.json({
             totalProducts,

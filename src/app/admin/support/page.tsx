@@ -95,7 +95,7 @@ export default function AdminSupportPage() {
     return (
         <div className="h-[calc(100vh-160px)] flex flex-col md:flex-row gap-6">
             {/* Conversations List */}
-            <div className="w-full md:w-96 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-white/5 flex flex-col overflow-hidden">
+            <div className={`w-full md:w-96 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-white/5 flex flex-col overflow-hidden ${selectedUser ? 'hidden md:flex' : 'flex'}`}>
                 <div className="p-8 border-b border-slate-100 dark:border-white/5">
                     <h2 className="text-2xl font-black mb-6 flex items-center justify-between">
                         {isAr ? 'المحادثات' : 'Support Center'}
@@ -156,7 +156,7 @@ export default function AdminSupportPage() {
             </div>
 
             {/* Chat Interface */}
-            <div className="flex-1 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-white/5 flex flex-col overflow-hidden relative">
+            <div className={`flex-1 bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-xl border border-slate-100 dark:border-white/5 flex flex-col overflow-hidden relative ${!selectedUser ? 'hidden md:flex' : 'flex'}`}>
                 {selectedUser ? (
                     <>
                         {/* Header */}
