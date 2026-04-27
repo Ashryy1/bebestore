@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Users, Mail, Phone, Calendar, Shield, ArrowLeft, Search } from 'lucide-react';
+import { Users, Mail, Phone, Calendar, Shield, ArrowLeft, Search, Copy, Check } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminUsersPage() {
     const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [copiedId, setCopiedId] = useState<string | null>(null);
 
     useEffect(() => {
         fetchUsers();
@@ -31,6 +32,12 @@ export default function AdminUsersPage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const handleCopy = (id: string) => {
+        navigator.clipboard.writeText(id);
+        setCopiedId(id);
+        setTimeout(() => setCopiedId(null), 2000);
     };
 
     const safeUsers = Array.isArray(users) ? users : [];
@@ -98,7 +105,16 @@ export default function AdminUsersPage() {
                                             </div>
                                             <div>
                                                 <p className="font-black text-slate-900 dark:text-white">{u.name}</p>
-                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{u.readableId || `ID: ${u._id.slice(-6)}`}</p>
+                                                <div className="flex items-center gap-2 mt-0.5">
+                                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{u.readableId || `ID: ${u._id.slice(-6)}`}</p>
+                                                    <button
+                                                        onClick={() => handleCopy(u.readableId || u._id)}
+                                                        className="p-1 rounded-md hover:bg-slate-100 dark:hover:bg-white/5 text-slate-400 hover:text-indigo-500 transition-all"
+                                                        title="Copy ID"
+                                                    >
+                                                        {copiedId === (u.readableId || u._id) ? <Check size={10} className="text-emerald-500" /> : <Copy size={10} />}
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -163,7 +179,15 @@ export default function AdminUsersPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-black text-slate-900 dark:text-white leading-tight">{u.name}</h3>
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{u.readableId || `ID: ${u._id.slice(-6)}`}</p>
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{u.readableId || `ID: ${u._id.slice(-6)}`}</p>
+                                            <button
+                                                onClick={() => handleCopy(u.readableId || u._id)}
+                                                className="p-1 rounded-md bg-slate-50 dark:bg-white/5 text-slate-400"
+                                            >
+                                                {copiedId === (u.readableId || u._id) ? <Check size={10} className="text-emerald-500" /> : <Copy size={10} />}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest ${u.role === 'admin'

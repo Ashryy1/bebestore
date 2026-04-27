@@ -23,7 +23,8 @@ export async function GET() {
                 name: user.name,
                 role: user.role,
                 image: user.image,
-                phone: user.phone
+                phone: user.phone,
+                readableId: user.readableId
             }
         });
     } catch {

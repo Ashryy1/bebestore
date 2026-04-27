@@ -9,6 +9,7 @@ interface AuthUser {
     role: 'user' | 'admin';
     image?: string;
     phone?: string;
+    readableId?: string;
 }
 
 interface AuthContextType {
@@ -67,7 +68,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                     email: data.user.email,
                     name: data.user.name,
                     role: data.user.role,
-                    image: data.user.image
+                    image: data.user.image,
+                    readableId: data.user.readableId
                 });
                 return { success: true };
             }

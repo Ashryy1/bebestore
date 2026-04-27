@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     User as UserIcon, Lock, Mail, Phone, Camera,
-    Save, Loader2, ArrowLeft, CheckCircle2, AlertCircle
+    Save, Loader2, ArrowLeft, CheckCircle2, AlertCircle, Copy, Check
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
@@ -17,6 +17,7 @@ export default function SettingsPage() {
     const isAr = lang === 'ar';
     const [activeTab, setActiveTab] = useState<'info' | 'security'>('info');
     const [loading, setLoading] = useState(false);
+    const [copied, setCopied] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
     const [formData, setFormData] = useState({
@@ -40,6 +41,13 @@ export default function SettingsPage() {
             }));
         }
     }, [user]);
+
+    const handleCopy = () => {
+        if (!user?.readableId) return;
+        navigator.clipboard.writeText(user.readableId);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
 
     const handleUpdateInfo = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -174,9 +182,23 @@ export default function SettingsPage() {
 
                             {activeTab === 'info' ? (
                                 <form onSubmit={handleUpdateInfo} className="space-y-8">
-                                    <h2 className="text-2xl font-black text-[var(--sh-fg)] mb-6 uppercase tracking-tight">
-                                        {isAr ? 'تعديل البيانات' : 'Update Profile'}
-                                    </h2>
+                                    <div className="flex items-center justify-between gap-6 mb-6">
+                                        <h2 className="text-2xl font-black text-[var(--sh-fg)] uppercase tracking-tight">
+                                            {isAr ? 'تعديل البيانات' : 'Update Profile'}
+                                        </h2>
+                                        {user?.readableId && (
+                                            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 border border-slate-200/50 dark:border-white/5">
+                                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{user.readableId}</span>
+                                                <button
+                                                    type="button"
+                                                    onClick={handleCopy}
+                                                    className="p-1 text-slate-400 hover:text-[var(--sh-primary)] transition-all"
+                                                >
+                                                    {copied ? <Check size={12} className="text-emerald-500" /> : <Copy size={12} />}
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
 
                                     {/* Avatar Upload */}
                                     <div className="flex flex-col items-center gap-6 p-8 rounded-[2rem] bg-slate-50 dark:bg-white/5 border border-dashed border-slate-200 dark:border-white/10">

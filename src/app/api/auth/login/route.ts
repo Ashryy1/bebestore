@@ -74,6 +74,7 @@ export async function POST(req: NextRequest) {
                     name: user.name,
                     email: user.email,
                     role: user.role,
+                    readableId: user.readableId
                 },
             });
 

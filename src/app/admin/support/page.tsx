@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, Send, User, ChevronRight, Loader2, Search, Bell, ArrowLeft, Image as ImageIcon, X } from 'lucide-react';
+import { MessageCircle, Send, User, ChevronRight, Loader2, Search, Bell, ArrowLeft, Image as ImageIcon, X, Copy, Check } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function AdminSupportPage() {
@@ -17,6 +17,7 @@ export default function AdminSupportPage() {
     const [sending, setSending] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
+    const [copiedId, setCopiedId] = useState<string | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -82,6 +83,12 @@ export default function AdminSupportPage() {
             };
             reader.readAsDataURL(file);
         }
+    };
+
+    const handleCopy = (id: string) => {
+        navigator.clipboard.writeText(id);
+        setCopiedId(id);
+        setTimeout(() => setCopiedId(null), 2000);
     };
 
     const handleSendMessage = async (e?: React.FormEvent) => {
@@ -208,7 +215,18 @@ export default function AdminSupportPage() {
                                 </div>
                                 <div>
                                     <h3 className="font-black text-lg">{selectedUser.name}</h3>
-                                    <p className="text-xs text-slate-400 font-bold">{selectedUser.email}</p>
+                                    <div className="flex items-center gap-3">
+                                        <p className="text-xs text-slate-400 font-bold">{selectedUser.email}</p>
+                                        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-white/5 border border-slate-200/50 dark:border-white/5">
+                                            <span className="text-[9px] font-black text-slate-500 uppercase tracking-tighter">{selectedUser.readableId || 'NO ID'}</span>
+                                            <button
+                                                onClick={() => handleCopy(selectedUser.readableId || selectedUser.userId)}
+                                                className="text-slate-400 hover:text-indigo-500 transition-colors"
+                                            >
+                                                {copiedId === (selectedUser.readableId || selectedUser.userId) ? <Check size={10} className="text-emerald-500" /> : <Copy size={10} />}
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div className="flex items-center gap-4">
