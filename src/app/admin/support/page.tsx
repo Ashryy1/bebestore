@@ -15,6 +15,7 @@ export default function AdminSupportPage() {
     const [loadingMessages, setLoadingMessages] = useState(false);
     const [sending, setSending] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -220,11 +221,14 @@ export default function AdminSupportPage() {
                                                 }`}
                                         >
                                             {msg.image && (
-                                                <div className="mb-3 rounded-2xl overflow-hidden border border-white/10 shadow-lg">
-                                                    <img src={msg.image} alt="Sent image" className="w-full h-auto max-h-80 object-cover" />
+                                                <div
+                                                    className="mb-3 rounded-2xl overflow-hidden border border-white/10 shadow-lg cursor-zoom-in transition-transform hover:scale-[1.01] active:scale-95"
+                                                    onClick={() => setPreviewImage(msg.image)}
+                                                >
+                                                    <img src={msg.image} alt="Sent image" className="w-full h-auto max-h-[28rem] object-cover" />
                                                 </div>
                                             )}
-                                            {msg.content}
+                                            {msg.content && <p className={msg.image ? 'mt-2' : ''}>{msg.content}</p>}
                                         </div>
                                         <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest px-2">
                                             {new Date(msg.createdAt).toLocaleTimeString()} • {msg.sender === 'admin' ? 'Support' : 'Customer'}
@@ -302,6 +306,45 @@ export default function AdminSupportPage() {
                     </div>
                 )}
             </div>
+
+            {/* Lightbox */}
+            <AnimatePresence>
+                {previewImage && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[200] flex items-center justify-center p-8 bg-slate-950/90 backdrop-blur-xl pointer-events-auto"
+                        onClick={() => setPreviewImage(null)}
+                    >
+                        <motion.button
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            whileHover={{ scale: 1.1 }}
+                            className="absolute top-10 right-10 w-14 h-14 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all z-10"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setPreviewImage(null);
+                            }}
+                        >
+                            <X size={28} />
+                        </motion.button>
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="relative max-w-6xl max-h-[85vh] w-full h-full flex items-center justify-center"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <img
+                                src={previewImage}
+                                alt="Full preview"
+                                className="max-w-full max-h-full object-contain rounded-3xl shadow-2xl border border-white/5"
+                            />
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

@@ -16,6 +16,7 @@ export default function SupportChat() {
     const [fetching, setFetching] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -215,11 +216,14 @@ export default function SupportChat() {
                                                             }`}
                                                     >
                                                         {msg.image && (
-                                                            <div className="mb-2 rounded-2xl overflow-hidden">
-                                                                <img src={msg.image} alt="Sent image" className="w-full h-auto max-h-60 object-cover" />
+                                                            <div
+                                                                className="mb-2 rounded-2xl overflow-hidden cursor-zoom-in transition-transform hover:scale-[1.02] active:scale-95"
+                                                                onClick={() => setPreviewImage(msg.image)}
+                                                            >
+                                                                <img src={msg.image} alt="Sent image" className="w-full h-auto max-h-80 object-cover shadow-sm" />
                                                             </div>
                                                         )}
-                                                        {msg.content}
+                                                        {msg.content && <p className={msg.image ? 'mt-3' : ''}>{msg.content}</p>}
                                                         <p className={`text-[8px] mt-2 opacity-50 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
                                                             {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                         </p>
@@ -292,6 +296,45 @@ export default function SupportChat() {
                             )}
                         </motion.div>
                     </div>
+                )}
+            </AnimatePresence>
+
+            {/* Image Box / Lightbox */}
+            <AnimatePresence>
+                {previewImage && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md pointer-events-auto"
+                        onClick={() => setPreviewImage(null)}
+                    >
+                        <motion.button
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            whileHover={{ scale: 1.1 }}
+                            className="absolute top-8 right-8 w-12 h-12 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all z-10"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setPreviewImage(null);
+                            }}
+                        >
+                            <X size={24} />
+                        </motion.button>
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="relative max-w-5xl max-h-[90vh] w-full h-full flex items-center justify-center"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <img
+                                src={previewImage}
+                                alt="Preview"
+                                className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl"
+                            />
+                        </motion.div>
+                    </motion.div>
                 )}
             </AnimatePresence>
 
