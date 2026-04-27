@@ -110,81 +110,96 @@ export default function UserOrdersPage() {
                         </div>
                     ) : (
                         orders.map((order, idx) => (
-                            <motion.div
+                            <Link
                                 key={order._id}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: idx * 0.05 }}
-                                className="glass-card rounded-[2rem] p-8 border border-slate-100 dark:border-white/5 shadow-xl shadow-black/[0.02]"
+                                href={order.source === 'custom' ? `/track/${order._id}` : `/orders/${order._id}`}
+                                className="block"
                             >
-                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                                    <div className="flex items-center gap-4">
-                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${order.status === 'Pending' ? 'bg-amber-500/10 text-amber-500' :
-                                            order.status === 'Shipped' ? 'bg-blue-500/10 text-blue-500' :
-                                                order.status === 'Completed' ? 'bg-emerald-500/10 text-emerald-500' :
-                                                    'bg-red-500/10 text-red-500'
-                                            }`}>
-                                            {order.status === 'Pending' ? <Clock size={24} /> :
-                                                order.status === 'Completed' ? <CheckCircle size={24} /> :
-                                                    <Package size={24} />}
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: idx * 0.05 }}
+                                    className="glass-card rounded-[2rem] p-8 border border-slate-100 dark:border-white/5 shadow-xl shadow-black/[0.02] hover:border-indigo-500/20 active:scale-[0.98] transition-all relative group"
+                                >
+                                    {order.hasUnreadUpdate && (
+                                        <div className="absolute top-6 left-6 flex items-center gap-2">
+                                            <div className="w-2 h-2 rounded-full bg-indigo-600 animate-pulse" />
+                                            <span className="text-[8px] font-black uppercase text-indigo-600 tracking-widest">New Update</span>
                                         </div>
-                                        <div>
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <p className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Order #{order.orderNumber}</p>
-                                                <button
-                                                    onClick={() => copyToClipboard(order.orderNumber)}
-                                                    className="p-1.5 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400 hover:text-indigo-600 transition-all"
-                                                >
-                                                    <Copy size={12} />
-                                                </button>
+                                    )}
+
+                                    <div className="absolute top-8 right-8 text-slate-200 group-hover:text-indigo-500 transition-colors">
+                                        <ChevronRight size={24} className={isAr ? 'rotate-180' : ''} />
+                                    </div>
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                                        <div className="flex items-center gap-4">
+                                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${order.status === 'Pending' ? 'bg-amber-500/10 text-amber-500' :
+                                                order.status === 'Shipped' ? 'bg-blue-500/10 text-blue-500' :
+                                                    order.status === 'Completed' ? 'bg-emerald-500/10 text-emerald-500' :
+                                                        'bg-red-500/10 text-red-500'
+                                                }`}>
+                                                {order.status === 'Pending' ? <Clock size={24} /> :
+                                                    order.status === 'Completed' ? <CheckCircle size={24} /> :
+                                                        <Package size={24} />}
                                             </div>
-                                            <p className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter">
-                                                {new Date(order.createdAt).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
-                                            </p>
+                                            <div>
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <p className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Order #{order.orderNumber}</p>
+                                                    <button
+                                                        onClick={() => copyToClipboard(order.orderNumber)}
+                                                        className="p-1.5 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400 hover:text-indigo-600 transition-all"
+                                                    >
+                                                        <Copy size={12} />
+                                                    </button>
+                                                </div>
+                                                <p className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tighter">
+                                                    {new Date(order.createdAt).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center gap-2 sm:gap-4">
+                                            <div className="text-right mr-2 sm:mr-4">
+                                                <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">{isAr ? 'الإجمالي' : 'Total'}</p>
+                                                <p className="text-xl font-black text-indigo-600 dark:text-indigo-400 whitespace-nowrap">{order.totalAmount.toLocaleString()} EGP</p>
+                                            </div>
+                                            <div className="flex flex-col sm:flex-row gap-2">
+                                                <button
+                                                    onClick={() => openSupport(order.orderNumber)}
+                                                    className="p-3 rounded-xl bg-indigo-600/10 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
+                                                    title={isAr ? 'تواصل مع الدعم' : 'Contact Support'}
+                                                >
+                                                    <MessageSquare size={18} />
+                                                </button>
+                                                {order.status === 'Pending' && (
+                                                    <button
+                                                        onClick={() => cancelOrder(order._id)}
+                                                        className="px-6 py-3 rounded-xl bg-red-500/5 text-red-500 font-black uppercase tracking-widest text-[10px] border border-red-500/20 hover:bg-red-500 hover:text-white transition-all shadow-sm h-full"
+                                                    >
+                                                        {isAr ? 'إلغاء' : 'Cancel'}
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center gap-2 sm:gap-4">
-                                        <div className="text-right mr-2 sm:mr-4">
-                                            <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">{isAr ? 'الإجمالي' : 'Total'}</p>
-                                            <p className="text-xl font-black text-indigo-600 dark:text-indigo-400 whitespace-nowrap">{order.totalAmount.toLocaleString()} EGP</p>
-                                        </div>
-                                        <div className="flex flex-col sm:flex-row gap-2">
-                                            <button
-                                                onClick={() => openSupport(order.orderNumber)}
-                                                className="p-3 rounded-xl bg-indigo-600/10 text-indigo-600 hover:bg-indigo-600 hover:text-white transition-all shadow-sm"
-                                                title={isAr ? 'تواصل مع الدعم' : 'Contact Support'}
-                                            >
-                                                <MessageSquare size={18} />
-                                            </button>
-                                            {order.status === 'Pending' && (
-                                                <button
-                                                    onClick={() => cancelOrder(order._id)}
-                                                    className="px-6 py-3 rounded-xl bg-red-500/5 text-red-500 font-black uppercase tracking-widest text-[10px] border border-red-500/20 hover:bg-red-500 hover:text-white transition-all shadow-sm h-full"
-                                                >
-                                                    {isAr ? 'إلغاء' : 'Cancel'}
-                                                </button>
-                                            )}
+                                    <div className="mt-8 pt-8 border-t border-slate-50 dark:border-white/5">
+                                        <div className="flex flex-wrap gap-4">
+                                            {order.items.map((item: any, i: number) => (
+                                                <div key={i} className="flex items-center gap-3 bg-slate-50 dark:bg-white/5 p-2 rounded-xl border border-slate-100 dark:border-white/5">
+                                                    <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+                                                        <img src={item.image} alt="" className="w-full h-full object-cover" />
+                                                    </div>
+                                                    <div className="min-w-0 pr-2">
+                                                        <p className="text-[10px] font-black text-slate-900 dark:text-white truncate max-w-[120px] uppercase tracking-tighter">{item.title}</p>
+                                                        <p className="text-[9px] font-bold text-slate-400">Qty: {item.quantity}</p>
+                                                    </div>
+                                                </div>
+                                            ))}
                                         </div>
                                     </div>
-                                </div>
-
-                                <div className="mt-8 pt-8 border-t border-slate-50 dark:border-white/5">
-                                    <div className="flex flex-wrap gap-4">
-                                        {order.items.map((item: any, i: number) => (
-                                            <div key={i} className="flex items-center gap-3 bg-slate-50 dark:bg-white/5 p-2 rounded-xl border border-slate-100 dark:border-white/5">
-                                                <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
-                                                    <img src={item.image} alt="" className="w-full h-full object-cover" />
-                                                </div>
-                                                <div className="min-w-0 pr-2">
-                                                    <p className="text-[10px] font-black text-slate-900 dark:text-white truncate max-w-[120px] uppercase tracking-tighter">{item.title}</p>
-                                                    <p className="text-[9px] font-bold text-slate-400">Qty: {item.quantity}</p>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </motion.div>
+                                </motion.div>
+                            </Link>
                         ))
                     )}
                 </div>

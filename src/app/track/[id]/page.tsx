@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import ImageUpload from '@/components/ImageUpload';
 import { ADMIN_WHATSAPP } from '@/lib/utils';
+import OrderChat from '@/components/OrderChat';
 const allStatuses = ['Pending', 'Reviewing', 'Pricing', 'Processing', 'Shipped', 'Completed'];
 
 export default function TrackPage() {
@@ -242,6 +243,15 @@ export default function TrackPage() {
                                     </div>
                                 )}
                             </motion.div>
+                        </div>
+
+                        {/* Order Specific Chat Section */}
+                        <div className="mb-16">
+                            <OrderChat
+                                orderId={id as string}
+                                isChatOpen={request.isChatOpen}
+                                isAdmin={false}
+                            />
                         </div>
 
                         {/* Deposit Request Card */}

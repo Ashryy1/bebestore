@@ -3,6 +3,7 @@ import { connectDB } from '@/lib/db';
 import { CustomRequest } from '@/lib/models/CustomRequest';
 import { Finance } from '@/lib/models/Finance';
 import { PushSubscription } from '@/lib/models/PushSubscription';
+import SupportMessage from '@/lib/models/SupportMessage';
 import { getAuthUser, requireAdmin } from '@/lib/auth';
 import { sendPushNotification } from '@/lib/push';
 
@@ -111,6 +112,15 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
                     orderId: request._id,
                 });
             }
+
+            // Automated Support Message
+            if (request.userId) {
+                await SupportMessage.create({
+                    userId: request.userId,
+                    sender: 'admin',
+                    content: `🎨 تحديث تصميم تلقائي: حالة طلبك الخاص رقم #${request.orderNumber} تغيرت إلى [${body.status}].\n\n🎨 Custom Design Update: Your request #${request.orderNumber} status changed to [${body.status}].`
+                });
+            }
         }
 
         // Update quote
@@ -119,7 +129,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
             request.timeline.push({
                 status: 'Pricing',
                 timestamp: new Date(),
-                note: `Price quote set: $${body.adminQuote}`,
+                note: `Price quote set: EGP ${body.adminQuote}`,
             });
         }
 

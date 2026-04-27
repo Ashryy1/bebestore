@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { Order } from '@/lib/models/Order';
+import SupportMessage from '@/lib/models/SupportMessage';
 
 import { requireAdmin } from '@/lib/auth';
 
@@ -36,8 +37,18 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         }
 
         // Handle Status Update
-        if (body.status) {
+        if (body.status && body.status !== order.status) {
+            const oldStatus = order.status;
             order.status = body.status;
+
+            // Automated Support Message
+            if (order.userId) {
+                await SupportMessage.create({
+                    userId: order.userId,
+                    sender: 'admin',
+                    content: `📢 تحديث تلقائي: حالة طلبك رقم #${order.orderNumber} تغيرت إلى [${body.status}].\n\n📢 Automatic Update: Your order #${order.orderNumber} status changed to [${body.status}].`
+                });
+            }
         }
 
         // Handle Deposit Fields

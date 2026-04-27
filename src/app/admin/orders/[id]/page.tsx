@@ -198,40 +198,45 @@ export default function OrderDetailPage() {
                                         <img src={order.depositScreenshot} className="w-full h-full object-cover" />
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] font-black uppercase">Click to open</div>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        <button
-                                            onClick={async () => {
-                                                const res = await fetch(`/api/orders/${id}`, {
-                                                    method: 'PUT',
-                                                    headers: { 'Content-Type': 'application/json' },
-                                                    body: JSON.stringify({ depositStatus: 'Paid' })
-                                                });
-                                                if (res.ok) {
-                                                    const data = await res.json();
-                                                    setOrder(data.order);
-                                                }
-                                            }}
-                                            className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 text-[8px] font-black uppercase hover:bg-emerald-500 hover:text-white transition-all"
-                                        >
-                                            Approve
-                                        </button>
-                                        <button
-                                            onClick={async () => {
-                                                const res = await fetch(`/api/orders/${id}`, {
-                                                    method: 'PUT',
-                                                    headers: { 'Content-Type': 'application/json' },
-                                                    body: JSON.stringify({ depositStatus: 'Rejected' })
-                                                });
-                                                if (res.ok) {
-                                                    const data = await res.json();
-                                                    setOrder(data.order);
-                                                }
-                                            }}
-                                            className="p-3 rounded-xl bg-red-500/10 text-red-600 text-[8px] font-black uppercase hover:bg-red-500 hover:text-white transition-all"
-                                        >
-                                            Reject
-                                        </button>
-                                    </div>
+                                    {(order.depositStatus === 'Requested' || order.status === 'Pending') && (
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <button
+                                                onClick={async () => {
+                                                    const res = await fetch(`/api/orders/${id}`, {
+                                                        method: 'PUT',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({
+                                                            depositStatus: 'Paid',
+                                                            status: 'Processing'
+                                                        })
+                                                    });
+                                                    if (res.ok) {
+                                                        const data = await res.json();
+                                                        setOrder(data.order);
+                                                    }
+                                                }}
+                                                className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 text-[8px] font-black uppercase hover:bg-emerald-500 hover:text-white transition-all"
+                                            >
+                                                Approve
+                                            </button>
+                                            <button
+                                                onClick={async () => {
+                                                    const res = await fetch(`/api/orders/${id}`, {
+                                                        method: 'PUT',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({ depositStatus: 'Rejected' })
+                                                    });
+                                                    if (res.ok) {
+                                                        const data = await res.json();
+                                                        setOrder(data.order);
+                                                    }
+                                                }}
+                                                className="p-3 rounded-xl bg-red-500/10 text-red-600 text-[8px] font-black uppercase hover:bg-red-500 hover:text-white transition-all"
+                                            >
+                                                Reject
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>

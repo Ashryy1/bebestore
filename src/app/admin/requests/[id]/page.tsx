@@ -259,20 +259,22 @@ export default function AdminRequestDetailPage() {
                                                 <img src={request.depositScreenshot} className="w-full h-full object-cover" />
                                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] font-black uppercase">Click to open</div>
                                             </div>
-                                            <div className="grid grid-cols-2 gap-2">
-                                                <button
-                                                    onClick={() => handleUpdate({ depositStatus: 'Paid' })}
-                                                    className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 text-[8px] font-black uppercase hover:bg-emerald-500 hover:text-white transition-all"
-                                                >
-                                                    Approve
-                                                </button>
-                                                <button
-                                                    onClick={() => handleUpdate({ depositStatus: 'Rejected' })}
-                                                    className="p-3 rounded-xl bg-red-500/10 text-red-600 text-[8px] font-black uppercase hover:bg-red-500 hover:text-white transition-all"
-                                                >
-                                                    Reject
-                                                </button>
-                                            </div>
+                                            {(request.depositStatus === 'Requested' || request.status === 'Pending') && (
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <button
+                                                        onClick={() => handleUpdate({ depositStatus: 'Paid', status: 'Processing' })}
+                                                        className="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 text-[8px] font-black uppercase hover:bg-emerald-500 hover:text-white transition-all"
+                                                    >
+                                                        Approve
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleUpdate({ depositStatus: 'Rejected' })}
+                                                        className="p-3 rounded-xl bg-red-500/10 text-red-600 text-[8px] font-black uppercase hover:bg-red-500 hover:text-white transition-all"
+                                                    >
+                                                        Reject
+                                                    </button>
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                 </div>
@@ -323,8 +325,8 @@ export default function AdminRequestDetailPage() {
                                 <button
                                     onClick={() => handleUpdate({ isChatOpen: !request.isChatOpen })}
                                     className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${request.isChatOpen
-                                            ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500 hover:text-white'
-                                            : 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white'
+                                        ? 'bg-amber-500/10 text-amber-600 hover:bg-amber-500 hover:text-white'
+                                        : 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white'
                                         }`}
                                 >
                                     {request.isChatOpen ? <Lock size={14} /> : <Unlock size={14} />}
