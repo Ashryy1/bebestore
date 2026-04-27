@@ -21,14 +21,15 @@ export async function POST(req: NextRequest) {
         const session = await getAuthUser();
         if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-        const { content } = await req.json();
-        if (!content) return NextResponse.json({ error: 'Content is required' }, { status: 400 });
+        const { content, image } = await req.json();
+        if (!content && !image) return NextResponse.json({ error: 'Content or image is required' }, { status: 400 });
 
         await connectDB();
         const newMessage = await SupportMessage.create({
             userId: session.userId,
             sender: 'user',
-            content
+            content: content || '',
+            image
         });
 
         return NextResponse.json({ message: newMessage });

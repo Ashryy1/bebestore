@@ -32,14 +32,15 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { content } = await req.json();
-        if (!content) return NextResponse.json({ error: 'Content is required' }, { status: 400 });
+        const { content, image } = await req.json();
+        if (!content && !image) return NextResponse.json({ error: 'Content or image is required' }, { status: 400 });
 
         await connectDB();
         const newMessage = await SupportMessage.create({
             userId: params.id,
             sender: 'admin',
-            content
+            content: content || '',
+            image
         });
 
         return NextResponse.json({ message: newMessage });

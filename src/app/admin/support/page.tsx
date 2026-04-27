@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, Send, User, ChevronRight, Loader2, Search, Bell, ArrowLeft } from 'lucide-react';
+import { MessageCircle, Send, User, ChevronRight, Loader2, Search, Bell, ArrowLeft, Image as ImageIcon, X } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function AdminSupportPage() {
@@ -14,7 +14,9 @@ export default function AdminSupportPage() {
     const [loadingConversations, setLoadingConversations] = useState(true);
     const [loadingMessages, setLoadingMessages] = useState(false);
     const [sending, setSending] = useState(false);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const isAr = lang === 'ar';
 
@@ -69,19 +71,34 @@ export default function AdminSupportPage() {
         }
     };
 
+    const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setSelectedImage(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newMessage.trim() || !selectedUser) return;
+        if ((!newMessage.trim() && !selectedImage) || !selectedUser) return;
 
         setSending(true);
         try {
             const res = await fetch(`/api/admin/support/${selectedUser.userId}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: newMessage }),
+                body: JSON.stringify({
+                    content: newMessage,
+                    image: selectedImage
+                }),
             });
             if (res.ok) {
                 setNewMessage('');
+                setSelectedImage(null);
                 fetchMessages(selectedUser.userId);
                 fetchConversations();
             }
@@ -202,6 +219,11 @@ export default function AdminSupportPage() {
                                                 : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-bl-none border border-slate-100 dark:border-white/5 shadow-lg shadow-slate-200/50 dark:shadow-none'
                                                 }`}
                                         >
+                                            {msg.image && (
+                                                <div className="mb-3 rounded-2xl overflow-hidden border border-white/10 shadow-lg">
+                                                    <img src={msg.image} alt="Sent image" className="w-full h-auto max-h-80 object-cover" />
+                                                </div>
+                                            )}
                                             {msg.content}
                                         </div>
                                         <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest px-2">
@@ -215,17 +237,54 @@ export default function AdminSupportPage() {
                         {/* Footer */}
                         <div className="p-8 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-white/5">
                             <form onSubmit={handleSendMessage} className="relative">
+                                <AnimatePresence>
+                                    {selectedImage && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10 }}
+                                            animate={{ opacity: 1, y: 0 }}
+                                            exit={{ opacity: 0, scale: 0.9 }}
+                                            className="absolute bottom-full mb-6 left-0 p-3 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-100 dark:border-white/5 flex items-center gap-4 z-50"
+                                        >
+                                            <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-inner ring-2 ring-indigo-500/10">
+                                                <img src={selectedImage} alt="Selected" className="w-full h-full object-cover" />
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => setSelectedImage(null)}
+                                                className="w-10 h-10 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-lg"
+                                            >
+                                                <X size={20} />
+                                            </button>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleImageSelect}
+                                    accept="image/*"
+                                    className="hidden"
+                                />
                                 <input
                                     type="text"
                                     value={newMessage}
                                     onChange={(e) => setNewMessage(e.target.value)}
                                     placeholder={isAr ? 'اكتب ردك هنا...' : 'Reply to customer...'}
                                     disabled={sending}
-                                    className="w-full bg-slate-100 dark:bg-white/5 border-2 border-transparent focus:border-indigo-600/20 rounded-[2rem] h-20 pl-10 pr-24 text-sm font-bold text-slate-900 dark:text-white transition-all outline-none"
+                                    className="w-full bg-slate-100 dark:bg-white/5 border-2 border-transparent focus:border-indigo-600/20 rounded-[2rem] h-20 pl-24 pr-24 text-sm font-bold text-slate-900 dark:text-white transition-all outline-none"
                                 />
                                 <button
+                                    type="button"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    disabled={sending}
+                                    className="absolute left-4 top-4 bottom-4 w-12 rounded-2xl bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-slate-400 flex items-center justify-center hover:bg-slate-300 dark:hover:bg-white/20 transition-all border-none"
+                                >
+                                    <ImageIcon size={20} />
+                                </button>
+                                <button
                                     type="submit"
-                                    disabled={sending || !newMessage.trim()}
+                                    disabled={sending || (!newMessage.trim() && !selectedImage)}
                                     className="absolute right-4 top-4 bottom-4 px-8 rounded-2xl bg-indigo-600 text-white font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-indigo-600/30 disabled:opacity-50"
                                 >
                                     {sending ? <Loader2 size={20} className="animate-spin mx-auto" /> : (isAr ? 'إرسال' : 'Send')}

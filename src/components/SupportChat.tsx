@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, MessageCircle, Loader2, User } from 'lucide-react';
+import { X, Send, MessageCircle, Loader2, User, Image as ImageIcon } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
 
@@ -15,7 +15,9 @@ export default function SupportChat() {
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const isAr = lang === 'ar';
 
@@ -90,19 +92,34 @@ export default function SupportChat() {
         return d.toLocaleDateString(isAr ? 'ar-EG' : 'en-US', { day: 'numeric', month: 'short' });
     };
 
+    const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                setSelectedImage(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newMessage.trim() || !user) return;
+        if ((!newMessage.trim() && !selectedImage) || !user) return;
 
         setLoading(true);
         try {
             const res = await fetch('/api/support', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: newMessage }),
+                body: JSON.stringify({
+                    content: newMessage,
+                    image: selectedImage
+                }),
             });
             if (res.ok) {
                 setNewMessage('');
+                setSelectedImage(null);
                 fetchMessages();
             }
         } catch (error) {
@@ -197,6 +214,11 @@ export default function SupportChat() {
                                                             : 'bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-bl-none border border-slate-200 dark:border-white/5'
                                                             }`}
                                                     >
+                                                        {msg.image && (
+                                                            <div className="mb-2 rounded-2xl overflow-hidden">
+                                                                <img src={msg.image} alt="Sent image" className="w-full h-auto max-h-60 object-cover" />
+                                                            </div>
+                                                        )}
                                                         {msg.content}
                                                         <p className={`text-[8px] mt-2 opacity-50 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
                                                             {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -213,17 +235,54 @@ export default function SupportChat() {
                             {user && (
                                 <div className="p-6 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-white/5">
                                     <form onSubmit={handleSendMessage} className="relative">
+                                        <AnimatePresence>
+                                            {selectedImage && (
+                                                <motion.div
+                                                    initial={{ opacity: 0, y: 10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, y: 10 }}
+                                                    className="absolute bottom-full mb-4 left-0 p-2 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-white/5 flex items-center gap-3 z-50"
+                                                >
+                                                    <div className="w-16 h-16 rounded-xl overflow-hidden shadow-inner">
+                                                        <img src={selectedImage} alt="Selected" className="w-full h-full object-cover" />
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setSelectedImage(null)}
+                                                        className="w-8 h-8 rounded-lg bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-all"
+                                                    >
+                                                        <X size={16} />
+                                                    </button>
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
+
+                                        <input
+                                            type="file"
+                                            ref={fileInputRef}
+                                            onChange={handleImageSelect}
+                                            accept="image/*"
+                                            className="hidden"
+                                        />
                                         <input
                                             type="text"
                                             value={newMessage}
                                             onChange={(e) => setNewMessage(e.target.value)}
                                             placeholder={isAr ? 'اكتب رسالتك هنا...' : 'Type your message...'}
                                             disabled={loading}
-                                            className="w-full bg-slate-100 dark:bg-white/5 border-2 border-transparent focus:border-indigo-600/20 rounded-2xl h-14 pl-6 pr-16 text-sm font-bold text-slate-900 dark:text-white transition-all outline-none"
+                                            className="w-full bg-slate-100 dark:bg-white/5 border-2 border-transparent focus:border-indigo-600/20 rounded-2xl h-14 pl-12 pr-16 text-sm font-bold text-slate-900 dark:text-white transition-all outline-none"
                                         />
                                         <button
+                                            type="button"
+                                            onClick={() => fileInputRef.current?.click()}
+                                            disabled={loading}
+                                            className="absolute left-2 top-2 w-10 h-10 rounded-xl bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-slate-400 flex items-center justify-center hover:bg-slate-300 dark:hover:bg-white/20 transition-all disabled:opacity-50"
+                                        >
+                                            <ImageIcon size={18} />
+                                        </button>
+                                        <button
                                             type="submit"
-                                            disabled={loading || !newMessage.trim()}
+                                            disabled={loading || (!newMessage.trim() && !selectedImage)}
                                             className="absolute right-2 top-2 w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
                                         >
                                             {loading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
