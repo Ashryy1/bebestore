@@ -106,7 +106,8 @@ export default function SupportChat() {
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if ((!newMessage.trim() && !selectedImage) || !user) return;
+        const canSend = newMessage.trim() !== '' || !!selectedImage;
+        if (!canSend || !user) return;
 
         setLoading(true);
         try {
@@ -286,7 +287,7 @@ export default function SupportChat() {
                                         </button>
                                         <button
                                             type="submit"
-                                            disabled={loading || (!newMessage.trim() && !selectedImage)}
+                                            disabled={loading || (newMessage.trim() === '' && !selectedImage)}
                                             className="absolute right-2 top-2 w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
                                         >
                                             {loading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
