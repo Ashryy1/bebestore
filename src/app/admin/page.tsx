@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Package, MessageSquare, TrendingUp, Users, ArrowUpRight, Clock, Plus, Zap, Activity } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface DashboardStats {
     totalProducts: number;
@@ -22,6 +23,8 @@ const colorConfig: Record<string, string> = {
 
 export default function AdminDashboard() {
     const { user } = useAuth();
+    const { lang } = useLanguage();
+    const isAr = lang === 'ar';
     const [statsData, setStatsData] = useState<DashboardStats | null>(null);
     const [recentActivity, setRecentActivity] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -51,34 +54,34 @@ export default function AdminDashboard() {
 
     const stats = [
         {
-            label: 'Total Products',
+            label: isAr ? 'إجمالي المنتجات' : 'Total Products',
             value: statsData?.totalProducts || 0,
-            change: 'Live inventory',
+            change: isAr ? 'المخزون الحالي' : 'Live inventory',
             icon: Package,
             color: 'indigo',
             link: '/admin/products'
         },
         {
-            label: 'Pending Requests',
+            label: isAr ? 'الطلبات المعلقة' : 'Pending Orders',
             value: statsData?.pendingRequests || 0,
-            change: 'Awaiting action',
+            change: isAr ? 'في انتظار البدء' : 'Awaiting action',
             icon: MessageSquare,
             color: 'amber',
             link: '/admin/requests'
         },
         {
-            label: 'Total Revenue',
+            label: isAr ? 'إجمالي الأرباح' : 'Total Revenue',
             value: statsData?.revenue?.toLocaleString() || '0',
-            change: 'Net earnings',
+            change: isAr ? 'صافي الدخل' : 'Net earnings',
             icon: TrendingUp,
             color: 'emerald',
             link: '/admin/finance',
             isCurrency: true
         },
         {
-            label: 'Customers',
+            label: isAr ? 'العملاء' : 'Customers',
             value: statsData?.totalCustomers || 0,
-            change: 'Platform members',
+            change: isAr ? 'أعضاء المنصة' : 'Platform members',
             icon: Users,
             color: 'violet',
             link: '/admin/users'

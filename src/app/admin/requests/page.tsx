@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { MessageSquare, Clock, ChevronRight, Sparkles, Filter, Search, Loader2 } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
 
 type Status = 'Pending' | 'Reviewing' | 'Pricing' | 'Processing' | 'Shipped' | 'Completed' | 'Returned';
 
@@ -18,6 +19,8 @@ const statusConfig: Record<Status, { color: string; bg: string; dot: string }> =
 };
 
 export default function AdminRequestsPage() {
+    const { lang } = useLanguage();
+    const isAr = lang === 'ar';
     const [requests, setRequests] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<string>('');
@@ -59,15 +62,15 @@ export default function AdminRequestsPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 className="text-4xl font-black tracking-tighter text-slate-900 dark:text-white leading-none">Request Hub</h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-2 font-bold uppercase text-[10px] tracking-[0.2em]">Curate custom handcrafted dreams</p>
+                    <h2 className="text-4xl font-black tracking-tighter text-slate-900 dark:text-white leading-none">{isAr ? 'مركز الطلبات' : 'Order Hub'}</h2>
+                    <p className="text-slate-500 dark:text-slate-400 mt-2 font-bold uppercase text-[10px] tracking-[0.2em]">{isAr ? 'إدارة طلبات التصميم اليدوي' : 'Curate custom handcrafted dreams'}</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <div className="relative group">
                         <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
                         <input
                             type="text"
-                            placeholder="Find request..."
+                            placeholder={isAr ? 'بحث عن طلب...' : 'Find order...'}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="input-field bg-slate-100 dark:bg-white/5 border-none h-14 pl-12 pr-6 rounded-2xl w-64 text-sm focus:ring-2 focus:ring-indigo-500/20 font-bold"
@@ -85,7 +88,7 @@ export default function AdminRequestsPage() {
                         : 'text-slate-500 hover:bg-slate-100 dark:hover:bg-white/10'
                         }`}
                 >
-                    All ({requests.length})
+                    {isAr ? 'الكل' : 'All'} ({requests.length})
                 </button>
                 {(['Pending', 'Reviewing', 'Pricing', 'Processing', 'Shipped', 'Completed', 'Returned'] as Status[]).map((status) => (
                     <button
@@ -180,8 +183,8 @@ export default function AdminRequestsPage() {
                     <div className="w-20 h-20 rounded-[2.5rem] bg-indigo-600/5 flex items-center justify-center mx-auto mb-6">
                         <MessageSquare size={32} className="text-indigo-600/20" />
                     </div>
-                    <h3 className="text-xl font-black text-slate-900 dark:text-white">No requests found</h3>
-                    <p className="text-slate-400 text-sm font-bold uppercase tracking-widest mt-2">Try a broad filter</p>
+                    <h3 className="text-xl font-black text-slate-900 dark:text-white">{isAr ? 'لا يوجد طلبات' : 'No orders found'}</h3>
+                    <p className="text-slate-400 text-sm font-bold uppercase tracking-widest mt-2">{isAr ? 'جرب البحث بكلمة أخرى' : 'Try a broad filter'}</p>
                 </div>
             )}
         </div>
