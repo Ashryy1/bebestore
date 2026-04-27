@@ -12,7 +12,7 @@ export interface ISupportMessage extends Document {
 const SupportMessageSchema: Schema = new Schema({
     userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     sender: { type: String, enum: ['user', 'admin'], required: true },
-    content: { type: String, required: true },
+    content: { type: String, required: false },
     image: { type: String, required: false },
     isRead: { type: Boolean, default: false },
 }, {
