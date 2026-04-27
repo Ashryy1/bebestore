@@ -29,6 +29,7 @@ export interface IOrder {
     depositScreenshot?: string;
     createdAt: Date;
     updatedAt: Date;
+    hasUnreadUpdate?: boolean;
 }
 
 const OrderSchema = new Schema<IOrder>(
@@ -64,6 +65,7 @@ const OrderSchema = new Schema<IOrder>(
             default: 'None',
         },
         depositScreenshot: { type: String },
+        hasUnreadUpdate: { type: Boolean, default: false },
     },
     { timestamps: true }
 );

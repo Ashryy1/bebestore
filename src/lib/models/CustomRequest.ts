@@ -31,6 +31,7 @@ export interface ICustomRequest {
     depositScreenshot?: string;
     createdAt: Date;
     updatedAt: Date;
+    hasUnreadUpdate?: boolean;
 }
 
 const TimelineEntrySchema = new Schema<ITimelineEntry>(
@@ -71,6 +72,7 @@ const CustomRequestSchema = new Schema<ICustomRequest>(
             default: 'None',
         },
         depositScreenshot: { type: String },
+        hasUnreadUpdate: { type: Boolean, default: false },
     },
     { timestamps: true }
 );

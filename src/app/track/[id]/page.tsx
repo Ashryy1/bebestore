@@ -34,6 +34,14 @@ export default function TrackPage() {
                 setAddress(data.request.shippingDetails.address || '');
                 setCity(data.request.shippingDetails.city || '');
             }
+            // Clear unread indicator if it exists
+            if (data.request?.hasUnreadUpdate) {
+                fetch(`/api/custom-requests/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ hasUnreadUpdate: false }),
+                }).catch(err => console.error('Error clearing unread:', err));
+            }
         } catch (error) {
             console.error('Error fetching request:', error);
         } finally {

@@ -22,7 +22,17 @@ export default function OrderDetailPage() {
         try {
             const res = await fetch(`/api/orders/${id}`);
             const data = await res.json();
-            if (data.order) setOrder(data.order);
+            if (data.order) {
+                setOrder(data.order);
+                // Clear unread indicator if it exists
+                if (data.order.hasUnreadUpdate) {
+                    fetch(`/api/orders/${id}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ hasUnreadUpdate: false }),
+                    }).catch(err => console.error('Error clearing unread:', err));
+                }
+            }
         } catch (error) {
             console.error('Fetch order error:', error);
         } finally {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle, Send, User, ChevronRight, Loader2, Search, Bell } from 'lucide-react';
+import { MessageCircle, Send, User, ChevronRight, Loader2, Search, Bell, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function AdminSupportPage() {
@@ -162,6 +162,12 @@ export default function AdminSupportPage() {
                         {/* Header */}
                         <div className="p-8 border-b border-slate-100 dark:border-white/5 flex items-center justify-between bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl z-10">
                             <div className="flex items-center gap-4">
+                                <button
+                                    onClick={() => setSelectedUser(null)}
+                                    className="md:hidden w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/10 flex items-center justify-center text-slate-400"
+                                >
+                                    <ArrowLeft size={20} className={isAr ? 'rotate-180' : ''} />
+                                </button>
                                 <div className="w-14 h-14 rounded-2xl bg-indigo-600/10 text-indigo-600 flex items-center justify-center font-black text-xl">
                                     {selectedUser.name.charAt(0)}
                                 </div>
@@ -170,7 +176,14 @@ export default function AdminSupportPage() {
                                     <p className="text-xs text-slate-400 font-bold">{selectedUser.email}</p>
                                 </div>
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex items-center gap-4">
+                                <button
+                                    onClick={() => setSelectedUser(null)}
+                                    className="hidden md:flex w-10 h-10 rounded-xl bg-slate-100 dark:bg-white/10 items-center justify-center text-slate-400 hover:text-indigo-600 transition-colors"
+                                    title={isAr ? 'رجوع للقائمة' : 'Back to list'}
+                                >
+                                    <ArrowLeft size={20} className={isAr ? 'rotate-180' : ''} />
+                                </button>
                                 <span className="p-2 px-4 rounded-full bg-green-500/10 text-green-500 text-[10px] font-black uppercase tracking-widest">Active Chat</span>
                             </div>
                         </div>

@@ -45,6 +45,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
         if (body.depositStatus !== undefined) order.depositStatus = body.depositStatus;
         if (body.depositScreenshot !== undefined) order.depositScreenshot = body.depositScreenshot;
 
+        order.hasUnreadUpdate = true;
+
         await order.save();
 
         return NextResponse.json({ order });
@@ -57,7 +59,8 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
     try {
         const { id } = params;
-        const { depositScreenshot } = await req.json();
+        const body = await req.json();
+        const { depositScreenshot, hasUnreadUpdate } = body;
 
         await connectDB();
         const order = await Order.findById(id);
@@ -69,6 +72,10 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
         if (depositScreenshot) {
             order.depositScreenshot = depositScreenshot;
             order.depositStatus = 'Pending';
+        }
+
+        if (hasUnreadUpdate !== undefined) {
+            order.hasUnreadUpdate = hasUnreadUpdate;
         }
 
         await order.save();

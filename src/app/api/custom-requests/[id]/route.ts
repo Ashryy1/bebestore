@@ -53,6 +53,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
             });
         }
 
+        if (body.hasUnreadUpdate !== undefined) {
+            request.hasUnreadUpdate = body.hasUnreadUpdate;
+        }
+
         await request.save();
 
         return NextResponse.json({ request });
@@ -124,6 +128,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         if (body.depositAmount !== undefined) request.depositAmount = body.depositAmount;
         if (body.depositStatus !== undefined) request.depositStatus = body.depositStatus;
         if (body.depositScreenshot !== undefined) request.depositScreenshot = body.depositScreenshot;
+
+        request.hasUnreadUpdate = true;
 
         await request.save();
 

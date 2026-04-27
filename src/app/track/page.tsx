@@ -151,6 +151,9 @@ export default function TrackRequestsPage() {
                                                             <span className="text-[10px] font-black text-[var(--sh-fg)] opacity-40 uppercase tracking-widest">
                                                                 {req.orderNumber} • {new Date(req.createdAt).toLocaleDateString()}
                                                             </span>
+                                                            {req.hasUnreadUpdate && (
+                                                                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                                                            )}
                                                         </div>
                                                         <h3 className="text-xl font-black text-[var(--sh-fg)] line-clamp-1 group-hover:text-[var(--sh-primary)] transition-colors">
                                                             {req.description || (req.items?.length > 0 ? req.items[0].title : 'Order')}
