@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ShoppingCart, Minus, Plus, ShoppingBag, ChevronRight, Heart, Share2, MessageCircle, Star, ShieldCheck, Truck, Loader2 } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import SizeChart from '@/components/SizeChart';
 import { useLanguage } from '@/context/LanguageContext';
@@ -24,6 +25,7 @@ export default function ProductDetailPage() {
     const [isWishlisted, setIsWishlisted] = useState(false);
     const [selectedSize, setSelectedSize] = useState<string | null>(null);
     const { addToCart } = useCart();
+    const { user } = useAuth();
 
     useEffect(() => {
         if (id) fetchProductData();
@@ -293,6 +295,8 @@ export default function ProductDetailPage() {
                                                     body: JSON.stringify({
                                                         userName: name,
                                                         userPhone: phone,
+                                                        userId: user?.userId,
+                                                        isWhatsAppOrder: true,
                                                         items: [{
                                                             productId: product._id,
                                                             title: product.title,

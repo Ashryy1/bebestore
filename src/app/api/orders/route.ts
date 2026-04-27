@@ -6,7 +6,7 @@ import { CustomRequest } from '@/lib/models/CustomRequest';
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { userName, userPhone, items, totalAmount, userId, shippingDetails } = body;
+        const { userName, userPhone, items, totalAmount, userId, shippingDetails, isWhatsAppOrder } = body;
 
         if (!userPhone || !items || items.length === 0) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
             totalAmount,
             shippingDetails,
             status: 'Pending',
+            isWhatsAppOrder: !!isWhatsAppOrder,
         });
 
         return NextResponse.json({ order });

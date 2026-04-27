@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { ShoppingCart, Clock, CheckCircle, Package, Search, Filter, Loader2, ChevronRight, User } from 'lucide-react';
+import { ShoppingCart, Clock, CheckCircle, Package, Search, Filter, Loader2, ChevronRight, User, MessageCircle } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
+import { formatWhatsAppNumber } from '@/lib/utils';
 
 type OrderStatus = 'Pending' | 'Shipped' | 'Completed' | 'Cancelled';
 
@@ -150,6 +151,12 @@ export default function AdminOrdersPage() {
                                                     <span className={`px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest border border-current ${order.source === 'custom' ? 'bg-violet-600/5 text-violet-600' : 'bg-blue-600/5 text-blue-600'}`}>
                                                         {order.source === 'custom' ? 'Custom' : 'Shop'}
                                                     </span>
+                                                    {order.isWhatsAppOrder && (
+                                                        <span className="px-4 py-1 rounded-full text-[8px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 flex items-center gap-1">
+                                                            <MessageCircle size={8} />
+                                                            WhatsApp
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-4">
@@ -180,12 +187,27 @@ export default function AdminOrdersPage() {
                                                 <option value="Completed">Completed</option>
                                                 <option value="Cancelled">Cancelled</option>
                                             </select>
-                                            <Link
-                                                href={order.source === 'custom' ? `/admin/requests/${order._id}` : `/admin/orders/${order._id}`}
-                                                className="text-center text-[8px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-colors"
-                                            >
-                                                {order.source === 'custom' ? 'View Details' : `View Items (${order.items?.length || 0})`}
-                                            </Link>
+                                            <div className="flex items-center gap-2">
+                                                <Link
+                                                    href={order.source === 'custom' ? `/admin/requests/${order._id}` : `/admin/orders/${order._id}`}
+                                                    className="flex-1 text-center text-[8px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-colors"
+                                                >
+                                                    View
+                                                </Link>
+                                                {order.isWhatsAppOrder && (
+                                                    <button
+                                                        onClick={() => {
+                                                            const msg = encodeURIComponent(`مرحباً ${order.userName}، بخصوص طلبك رقم #${order.orderNumber}، الحالة هي: [${order.status}]`);
+                                                            const phone = formatWhatsAppNumber(order.userPhone);
+                                                            window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+                                                        }}
+                                                        className="p-1 px-2 rounded-lg bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500 hover:text-white transition-all"
+                                                        title="Share Update"
+                                                    >
+                                                        <MessageCircle size={10} />
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

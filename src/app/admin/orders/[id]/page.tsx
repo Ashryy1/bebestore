@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Package, ArrowLeft, User, Phone, MapPin, Calendar, CreditCard, ShoppingBag, Clock, CheckCircle, Truck, XCircle, Loader2, DollarSign } from 'lucide-react';
+import { Package, ArrowLeft, User, Phone, MapPin, Calendar, CreditCard, ShoppingBag, Clock, CheckCircle, Truck, XCircle, Loader2, DollarSign, MessageCircle } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
+import { formatWhatsAppNumber } from '@/lib/utils';
 
 export default function OrderDetailPage() {
     const { id } = useParams();
@@ -57,6 +58,12 @@ export default function OrderDetailPage() {
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Placed on {new Date(order.createdAt).toLocaleString()}</span>
                         <div className="w-1 h-1 rounded-full bg-slate-200 dark:bg-white/10" />
                         <span className="text-[10px] font-black uppercase tracking-widest text-indigo-500">{order.status}</span>
+                        {order.isWhatsAppOrder && (
+                            <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                                <MessageCircle size={10} />
+                                <span className="text-[8px] font-black uppercase tracking-widest">WhatsApp Order</span>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
@@ -208,6 +215,17 @@ export default function OrderDetailPage() {
                                 <Phone size={14} />
                                 <span className="text-sm font-bold">{order.userPhone}</span>
                             </div>
+                            <button
+                                onClick={() => {
+                                    const msg = encodeURIComponent(`مرحباً ${order.userName}، بخصوص طلبك رقم #${order.orderNumber}، الحالة الحالية هي: [${order.status}]. سنوافيك بالتحديثات...`);
+                                    const phone = formatWhatsAppNumber(order.userPhone);
+                                    window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
+                                }}
+                                className="mt-4 w-full py-3 rounded-xl bg-emerald-500/10 text-emerald-600 font-bold text-xs flex items-center justify-center gap-2 border border-emerald-500/20 hover:bg-emerald-500 hover:text-white transition-all"
+                            >
+                                <MessageCircle size={14} />
+                                Send WhatsApp Update
+                            </button>
                         </div>
 
                         <div className="pt-8 border-t border-slate-100 dark:border-white/5">

@@ -30,6 +30,7 @@ export interface IOrder {
     createdAt: Date;
     updatedAt: Date;
     hasUnreadUpdate?: boolean;
+    isWhatsAppOrder?: boolean;
 }
 
 const OrderSchema = new Schema<IOrder>(
@@ -66,6 +67,7 @@ const OrderSchema = new Schema<IOrder>(
         },
         depositScreenshot: { type: String },
         hasUnreadUpdate: { type: Boolean, default: false },
+        isWhatsAppOrder: { type: Boolean, default: false },
     },
     { timestamps: true }
 );
