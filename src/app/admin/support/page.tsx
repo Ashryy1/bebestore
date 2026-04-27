@@ -85,8 +85,9 @@ export default function AdminSupportPage() {
 
     const handleSendMessage = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
-        const canSubmit = newMessage.trim() !== '' || !!selectedImage;
-        if (!canSubmit || sending || !selectedUser) return;
+        const hasText = newMessage && newMessage.trim().length > 0;
+        const hasImage = !!selectedImage;
+        if ((!hasText && !hasImage) || sending || !selectedUser) return;
 
         setSending(true);
         try {
@@ -289,7 +290,7 @@ export default function AdminSupportPage() {
                                 </button>
                                 <button
                                     type="submit"
-                                    disabled={sending || (!newMessage.trim() && !selectedImage)}
+                                    disabled={sending || (!newMessage && !selectedImage)}
                                     className="absolute right-4 top-4 bottom-4 px-8 rounded-2xl bg-indigo-600 text-white font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-indigo-600/30 disabled:opacity-50"
                                 >
                                     {sending ? <Loader2 size={20} className="animate-spin mx-auto" /> : (isAr ? 'إرسال' : 'Send')}
