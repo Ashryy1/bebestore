@@ -69,8 +69,8 @@ export default function AdminUsersPage() {
                 </div>
             </div>
 
-            {/* Users Table Card */}
-            <div className="glass-card rounded-[2.5rem] overflow-hidden border border-slate-100 dark:border-white/5 shadow-2xl shadow-black/5">
+            {/* Desktop Table View */}
+            <div className="hidden md:block glass-card rounded-[2.5rem] overflow-hidden border border-slate-100 dark:border-white/5 shadow-2xl shadow-black/5">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
@@ -135,6 +135,70 @@ export default function AdminUsersPage() {
                         </tbody>
                     </table>
                 </div>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-4">
+                {loading ? (
+                    Array(3).fill(0).map((_, i) => (
+                        <div key={i} className="glass-card rounded-3xl p-6 animate-pulse bg-slate-100 dark:bg-white/5 h-40" />
+                    ))
+                ) : filteredUsers.length === 0 ? (
+                    <div className="text-center py-10 opacity-30">
+                        <p className="font-black text-xs uppercase tracking-widest italic">No members found</p>
+                    </div>
+                ) : (
+                    filteredUsers.map((u) => (
+                        <motion.div
+                            key={u._id}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="glass-card rounded-[2rem] p-6 border border-slate-100 dark:border-white/5 shadow-xl relative overflow-hidden"
+                        >
+                            <div className="flex items-start justify-between mb-6">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-14 h-14 rounded-2xl bg-indigo-600/10 flex items-center justify-center text-indigo-600 font-black text-xl">
+                                        {u.name?.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div>
+                                        <h3 className="font-black text-slate-900 dark:text-white leading-tight">{u.name}</h3>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">ID: {u._id.slice(-6)}</p>
+                                    </div>
+                                </div>
+                                <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest ${u.role === 'admin'
+                                    ? 'bg-indigo-600 text-white'
+                                    : 'bg-emerald-500/10 text-emerald-500'
+                                    }`}>
+                                    <Shield size={8} />
+                                    {u.role}
+                                </span>
+                            </div>
+
+                            <div className="space-y-3 pt-6 border-t border-slate-100 dark:border-white/5">
+                                <div className="flex items-center gap-3 text-xs font-bold text-slate-600 dark:text-slate-300">
+                                    <div className="w-8 h-8 rounded-lg bg-slate-50 dark:bg-white/5 flex items-center justify-center text-indigo-500">
+                                        <Mail size={14} />
+                                    </div>
+                                    <span className="truncate">{u.email}</span>
+                                </div>
+                                {u.phone && (
+                                    <div className="flex items-center gap-3 text-xs font-bold text-slate-600 dark:text-slate-300">
+                                        <div className="w-8 h-8 rounded-lg bg-slate-50 dark:bg-white/5 flex items-center justify-center text-emerald-500">
+                                            <Phone size={14} />
+                                        </div>
+                                        <span>{u.phone}</span>
+                                    </div>
+                                )}
+                                <div className="flex items-center gap-3 text-xs font-bold text-slate-400">
+                                    <div className="w-8 h-8 rounded-lg bg-slate-50 dark:bg-white/5 flex items-center justify-center">
+                                        <Calendar size={14} />
+                                    </div>
+                                    <span className="uppercase tracking-widest text-[9px] font-black">Joined {new Date(u.createdAt).toLocaleDateString()}</span>
+                                </div>
+                            </div>
+                        </motion.div>
+                    ))
+                )}
             </div>
         </div>
     );
