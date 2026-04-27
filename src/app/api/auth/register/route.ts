@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { connectDB } from '@/lib/db';
 import { User } from '@/lib/models/User';
 import { hashPassword } from '@/lib/auth';
+import { generateReadableId } from '@/lib/utils';
 
 export async function POST(req: NextRequest) {
     try {
@@ -21,6 +22,7 @@ export async function POST(req: NextRequest) {
         const user = await User.create({
             name,
             email: email.toLowerCase(),
+            readableId: generateReadableId(),
             phone: phone || '',
             password: hashedPassword,
             role: 'user',

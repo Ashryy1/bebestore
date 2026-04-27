@@ -38,6 +38,8 @@ export async function GET() {
                     userId: '$_id',
                     name: { $ifNull: ['$userInfo.name', 'Deleted User'] },
                     email: { $ifNull: ['$userInfo.email', 'N/A'] },
+                    phone: { $ifNull: ['$userInfo.phone', ''] },
+                    readableId: { $ifNull: ['$userInfo.readableId', ''] },
                     lastMessage: 1,
                     lastTimestamp: 1,
                     unreadCount: 1

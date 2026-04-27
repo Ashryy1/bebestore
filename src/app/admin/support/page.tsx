@@ -13,6 +13,7 @@ export default function AdminSupportPage() {
     const [newMessage, setNewMessage] = useState('');
     const [loadingConversations, setLoadingConversations] = useState(true);
     const [loadingMessages, setLoadingMessages] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
     const [sending, setSending] = useState(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -128,6 +129,8 @@ export default function AdminSupportPage() {
                         <input
                             type="text"
                             placeholder={isAr ? 'بحث...' : 'Search customers...'}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full bg-slate-50 dark:bg-white/5 rounded-2xl h-12 pl-12 pr-6 text-sm font-bold transition-all outline-none focus:ring-2 ring-indigo-500/20"
                         />
                     </div>
@@ -138,39 +141,51 @@ export default function AdminSupportPage() {
                         <div className="h-full flex items-center justify-center">
                             <Loader2 className="animate-spin text-indigo-500" />
                         </div>
-                    ) : conversations.length === 0 ? (
+                    ) : conversations.filter(c =>
+                        c.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        c.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        c.phone?.includes(searchTerm) ||
+                        c.readableId?.toLowerCase().includes(searchTerm.toLowerCase())
+                    ).length === 0 ? (
                         <div className="h-full flex flex-col items-center justify-center opacity-30 text-center p-10">
-                            <MessageCircle size={48} className="mb-4" />
-                            <p className="font-black text-xs uppercase tracking-widest">{isAr ? 'لا توجد رسائل' : 'Inbox Empty'}</p>
+                            <Search size={48} className="mb-4" />
+                            <p className="font-black text-xs uppercase tracking-widest">{isAr ? 'لا يوجد نتائج' : 'No results found'}</p>
                         </div>
                     ) : (
-                        conversations.map((conv) => (
-                            <button
-                                key={conv.userId}
-                                onClick={() => setSelectedUser(conv)}
-                                className={`w-full p-6 rounded-3xl flex items-center gap-4 transition-all duration-300 text-left ${selectedUser?.userId === conv.userId
-                                    ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/20'
-                                    : 'hover:bg-slate-50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400 border border-transparent'
-                                    }`}
-                            >
-                                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner ${selectedUser?.userId === conv.userId ? 'bg-white/20' : 'bg-slate-100 dark:bg-white/5'}`}>
-                                    {conv.name.charAt(0).toUpperCase()}
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-center justify-between mb-1">
-                                        <h4 className="font-black truncate text-sm">{conv.name}</h4>
-                                        {conv.unreadCount > 0 && selectedUser?.userId !== conv.userId && (
-                                            <span className="w-5 h-5 rounded-full bg-red-500 text-[10px] text-white flex items-center justify-center shadow-lg animate-bounce">
-                                                {conv.unreadCount}
-                                            </span>
-                                        )}
+                        conversations
+                            .filter(c =>
+                                c.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                c.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                c.phone?.includes(searchTerm) ||
+                                c.readableId?.toLowerCase().includes(searchTerm.toLowerCase())
+                            )
+                            .map((conv) => (
+                                <button
+                                    key={conv.userId}
+                                    onClick={() => setSelectedUser(conv)}
+                                    className={`w-full p-6 rounded-3xl flex items-center gap-4 transition-all duration-300 text-left ${selectedUser?.userId === conv.userId
+                                        ? 'bg-indigo-600 text-white shadow-xl shadow-indigo-600/20'
+                                        : 'hover:bg-slate-50 dark:hover:bg-white/5 text-slate-600 dark:text-slate-400 border border-transparent'
+                                        }`}
+                                >
+                                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-black text-xl shadow-inner ${selectedUser?.userId === conv.userId ? 'bg-white/20' : 'bg-slate-100 dark:bg-white/5'}`}>
+                                        {conv.name.charAt(0).toUpperCase()}
                                     </div>
-                                    <p className={`text-xs truncate opacity-70 ${selectedUser?.userId === conv.userId ? 'text-white' : ''}`}>
-                                        {conv.lastMessage}
-                                    </p>
-                                </div>
-                            </button>
-                        ))
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center justify-between mb-1">
+                                            <h4 className="font-black truncate text-sm">{conv.name}</h4>
+                                            {conv.unreadCount > 0 && selectedUser?.userId !== conv.userId && (
+                                                <span className="w-5 h-5 rounded-full bg-red-500 text-[10px] text-white flex items-center justify-center shadow-lg animate-bounce">
+                                                    {conv.unreadCount}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <p className={`text-xs truncate opacity-70 ${selectedUser?.userId === conv.userId ? 'text-white' : ''}`}>
+                                            {conv.lastMessage}
+                                        </p>
+                                    </div>
+                                </button>
+                            ))
                     )}
                 </div>
             </div>

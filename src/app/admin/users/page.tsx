@@ -37,7 +37,8 @@ export default function AdminUsersPage() {
     const filteredUsers = safeUsers.filter(u =>
         u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         u.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.phone?.includes(searchTerm)
+        u.phone?.includes(searchTerm) ||
+        u.readableId?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -97,7 +98,7 @@ export default function AdminUsersPage() {
                                             </div>
                                             <div>
                                                 <p className="font-black text-slate-900 dark:text-white">{u.name}</p>
-                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">ID: {u._id.slice(-6)}</p>
+                                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{u.readableId || `ID: ${u._id.slice(-6)}`}</p>
                                             </div>
                                         </div>
                                     </td>
@@ -162,7 +163,7 @@ export default function AdminUsersPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-black text-slate-900 dark:text-white leading-tight">{u.name}</h3>
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">ID: {u._id.slice(-6)}</p>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{u.readableId || `ID: ${u._id.slice(-6)}`}</p>
                                     </div>
                                 </div>
                                 <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-lg text-[8px] font-black uppercase tracking-widest ${u.role === 'admin'
