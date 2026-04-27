@@ -9,6 +9,7 @@ import SizeChart from '@/components/SizeChart';
 import { useLanguage } from '@/context/LanguageContext';
 import { useCart } from '@/context/CartContext';
 import ProductCard from '@/components/ProductCard';
+import { ADMIN_WHATSAPP } from '@/lib/utils';
 
 export default function ProductDetailPage() {
     const { id } = useParams();
@@ -56,7 +57,7 @@ export default function ProductDetailPage() {
                 ? `مرحباً، أود طلب ${title} (عدد: ${quantity}). السعر الإجمالي: ${product.price * quantity} ج.م`
                 : `Hello, I'd like to order ${title} (Qty: ${quantity}). Total price: ${product.price * quantity} EGP`
         );
-        window.open(`https://wa.me/201234567890?text=${message}`, '_blank');
+        window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${message}`, '_blank');
     };
 
     if (loading) {
@@ -210,8 +211,8 @@ export default function ProductDetailPage() {
                                                 key={s.label}
                                                 onClick={() => setSelectedSize(s.label)}
                                                 className={`px-8 py-4 rounded-2xl font-black text-sm transition-all duration-300 border-2 ${selectedSize === s.label
-                                                        ? 'bg-indigo-600 border-indigo-600 text-white shadow-xl shadow-indigo-600/20 scale-105'
-                                                        : 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/5 text-slate-600 dark:text-slate-300 hover:border-slate-200 dark:hover:border-white/10'
+                                                    ? 'bg-indigo-600 border-indigo-600 text-white shadow-xl shadow-indigo-600/20 scale-105'
+                                                    : 'bg-slate-50 dark:bg-white/5 border-slate-100 dark:border-white/5 text-slate-600 dark:text-slate-300 hover:border-slate-200 dark:hover:border-white/10'
                                                     }`}
                                             >
                                                 {s.label}
@@ -310,7 +311,7 @@ export default function ProductDetailPage() {
                                                         ? `طلب جديد رقم #${orderNo}\nالمنتج: ${product.title}\nالعدد: ${quantity}\nالإجمالي: ${product.price * quantity} ج.م`
                                                         : `New Order #${orderNo}\nProduct: ${product.title}\nQty: ${quantity}\nTotal: ${product.price * quantity} EGP`
                                                 );
-                                                window.open(`https://wa.me/201234567890?text=${message}`, '_blank');
+                                                window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${message}`, '_blank');
                                             } catch (error) {
                                                 console.error('Order creation error:', error);
                                             }

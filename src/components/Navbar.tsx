@@ -46,7 +46,10 @@ export default function Navbar() {
         { href: '/orders', label: t('myOrders'), icon: Package },
         { href: '/custom', label: t('custom'), icon: Palette },
         { href: '/track', label: t('track'), icon: Truck },
-    ];
+    ].filter(link => {
+        if (!user) return link.href === '/';
+        return link.href !== '/';
+    });
 
     const sidebarVariants = {
         closed: {
@@ -128,7 +131,7 @@ export default function Navbar() {
 
                             {user ? (
                                 <div className="flex items-center gap-2 p-1 bg-slate-100/50 dark:bg-slate-800/40 rounded-2xl border border-slate-200/50 dark:border-slate-800/30">
-                                    <Link href="/orders" className="flex items-center gap-3 px-3 py-1.5 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all">
+                                    <Link href="/settings" className="flex items-center gap-3 px-3 py-1.5 hover:bg-white dark:hover:bg-slate-800 rounded-xl transition-all">
                                         <div className="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-black text-xs shadow-lg shadow-indigo-500/20 overflow-hidden">
                                             {user.image ? (
                                                 <img src={user.image} alt="Profile" className="w-full h-full object-cover" />
@@ -138,7 +141,7 @@ export default function Navbar() {
                                         </div>
                                         <div className="hidden lg:block truncate max-w-[100px]">
                                             <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 leading-none mb-0.5">
-                                                {user.role === 'admin' ? t('admin') : t('myOrders')}
+                                                {user.role === 'admin' ? t('admin') : t('settings')}
                                             </p>
                                             <p className="text-xs font-bold text-slate-900 dark:text-white leading-none truncate opacity-80">
                                                 {user.name || user.email.split('@')[0]}

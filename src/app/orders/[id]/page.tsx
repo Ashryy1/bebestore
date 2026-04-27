@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, ShoppingBag, Clock, Package, Truck, CheckCircle, Copy, Loader2, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
+import { ADMIN_WHATSAPP } from '@/lib/utils';
 
 export default function OrderDetailPage() {
     const { id } = useParams();
@@ -154,7 +155,7 @@ export default function OrderDetailPage() {
                             <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{isAr ? 'تواصل معنا' : 'STAY CONNECTED'}</h3>
                         </div>
                         <button
-                            onClick={() => window.open(`https://wa.me/201234567890?text=${encodeURIComponent(`مرحباً، أستفسر عن طلبي رقم #${order.orderNumber}`)}`, '_blank')}
+                            onClick={() => window.open(`https://wa.me/${ADMIN_WHATSAPP}?text=${encodeURIComponent(`مرحباً، أستفسر عن طلبي رقم #${order.orderNumber}`)}`, '_blank')}
                             className="w-full py-4 rounded-2xl bg-emerald-500 text-white font-black uppercase tracking-widest text-[10px] hover:bg-emerald-600 transition-all flex items-center justify-center gap-2"
                         >
                             <MessageCircle size={16} />

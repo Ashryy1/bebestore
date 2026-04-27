@@ -8,6 +8,7 @@ import { ArrowLeft, DollarSign, CheckCircle, MapPin, Clock, Sparkles, Loader2, S
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import ImageUpload from '@/components/ImageUpload';
+import { ADMIN_WHATSAPP } from '@/lib/utils';
 const allStatuses = ['Pending', 'Reviewing', 'Pricing', 'Processing', 'Shipped', 'Completed'];
 
 export default function TrackPage() {
@@ -279,7 +280,9 @@ export default function TrackPage() {
                                                     </div>
                                                     <div>
                                                         <p className="text-[8px] font-black text-amber-600 uppercase tracking-widest mb-0.5">{isAr ? 'رقم التحويل' : 'PAYMENT NUMBER'}</p>
-                                                        <p className="text-lg font-black text-slate-900 dark:text-white">010 1234 5678</p>
+                                                        <p className="text-lg font-black text-slate-900 dark:text-white">
+                                                            {ADMIN_WHATSAPP.startsWith('20') ? '0' + ADMIN_WHATSAPP.substring(2) : ADMIN_WHATSAPP}
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </div>

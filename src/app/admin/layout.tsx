@@ -15,6 +15,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     const router = useRouter();
     const pathname = usePathname();
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [desktopSidebarOpen, setDesktopSidebarOpen] = useState(true);
 
     const [supportUnread, setSupportUnread] = useState(0);
 
@@ -68,9 +69,11 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     const isRtl = lang === 'ar';
 
     return (
-        <div className="min-h-screen flex bg-slate-50/50 dark:bg-slate-950 transition-colors duration-500">
+        <div className="min-h-screen flex bg-slate-50/50 dark:bg-slate-950 transition-colors duration-500 overflow-x-hidden">
             {/* Desktop Sidebar */}
-            <aside className={`hidden lg:flex w-80 flex-col fixed top-0 ${isRtl ? 'right-0 border-l' : 'left-0 border-r'} bottom-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-3xl border-slate-200/50 dark:border-white/5`}>
+            <aside
+                className={`hidden lg:flex flex-col fixed top-0 ${isRtl ? 'right-0 border-l' : 'left-0 border-r'} bottom-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-3xl border-slate-200/50 dark:border-white/5 transition-all duration-500 ${desktopSidebarOpen ? 'w-80' : 'w-0 opacity-0 pointer-events-none'}`}
+            >
                 {/* Logo Section */}
                 <div className="p-8 pb-10">
                     <Link href="/admin" className="flex items-center gap-4">
@@ -150,6 +153,17 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                     </div>
                 </div>
             </aside>
+
+            {/* Desktop Sidebar Toggle Button */}
+            <button
+                onClick={() => setDesktopSidebarOpen(!desktopSidebarOpen)}
+                className={`hidden lg:flex fixed top-8 z-50 w-10 h-10 rounded-xl bg-white dark:bg-slate-800 shadow-xl border border-slate-100 dark:border-white/5 items-center justify-center text-slate-500 hover:text-indigo-600 transition-all duration-500 hover:scale-110 active:scale-95 ${isRtl
+                        ? (desktopSidebarOpen ? 'right-[19rem]' : 'right-8')
+                        : (desktopSidebarOpen ? 'left-[19rem]' : 'left-8')
+                    }`}
+            >
+                <ChevronRight size={20} className={`transition-transform duration-500 ${desktopSidebarOpen ? (isRtl ? 'rotate-0' : 'rotate-180') : (isRtl ? 'rotate-180' : 'rotate-0')}`} />
+            </button>
 
             {/* Mobile Header */}
             <div className={`lg:hidden fixed top-0 left-0 right-0 z-[100] bg-white/80 dark:bg-slate-900/80 backdrop-blur-3xl border-b border-slate-100 dark:border-white/5 px-6 py-4 flex items-center justify-between`}>
@@ -249,8 +263,13 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             </AnimatePresence>
 
             {/* Main Content Area */}
-            <main className="flex-1 lg:ml-80 min-h-screen overflow-x-hidden">
-                <div className="pt-24 lg:pt-12 px-4 sm:px-6 lg:px-12 pb-20 lg:pb-12 max-w-7xl mx-auto overflow-x-auto">
+            <main
+                className={`flex-1 min-h-screen overflow-x-hidden transition-all duration-500 ${desktopSidebarOpen
+                        ? (isRtl ? 'lg:mr-80' : 'lg:ml-80')
+                        : 'lg:ml-0 lg:mr-0'
+                    }`}
+            >
+                <div className="pt-24 lg:pt-12 px-4 sm:px-6 lg:px-12 pb-20 lg:pb-12 max-w-7xl mx-auto">
                     {children}
                 </div>
             </main>

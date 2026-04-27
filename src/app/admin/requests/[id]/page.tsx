@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Timeline from '@/components/Timeline';
 import { ArrowLeft, Send, DollarSign, CheckCircle2, User, Clock, MessageCircle, AlertCircle, Phone, MapPin, Loader2, Package } from 'lucide-react';
+import { formatWhatsAppNumber } from '@/lib/utils';
 
 type Status = 'Pending' | 'Reviewing' | 'Pricing' | 'Processing' | 'Shipped' | 'Completed' | 'Returned';
 
@@ -72,7 +73,8 @@ export default function AdminRequestDetailPage() {
     const handleWhatsApp = () => {
         if (!request?.userPhone) return;
         const msg = encodeURIComponent(`مرحباً ${request.userName}، تواصلنا معك بخصوص طلب الكروشيه الخاص بك...`);
-        window.open(`https://wa.me/${request.userPhone.replace(/\s+/g, '')}?text=${msg}`, '_blank');
+        const formattedPhone = formatWhatsAppNumber(request.userPhone);
+        window.open(`https://wa.me/${formattedPhone}?text=${msg}`, '_blank');
     };
 
     if (loading) {
