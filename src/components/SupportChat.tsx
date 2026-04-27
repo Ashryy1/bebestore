@@ -5,10 +5,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, MessageCircle, Loader2, User, Image as ImageIcon } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useLanguage } from '@/context/LanguageContext';
+import { usePathname } from 'next/navigation';
 
 export default function SupportChat() {
+    const pathname = usePathname();
     const { user } = useAuth();
     const { lang } = useLanguage();
+
+    const isAdminRoute = pathname?.startsWith('/admin');
+
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState<any[]>([]);
     const [newMessage, setNewMessage] = useState('');
@@ -131,6 +136,8 @@ export default function SupportChat() {
             setLoading(false);
         }
     };
+
+    if (isAdminRoute) return null;
 
     return (
         <>

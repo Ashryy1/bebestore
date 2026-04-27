@@ -24,14 +24,17 @@ export async function GET() {
             });
         }
 
-        const [totalProducts, pendingRequests, financeRecords, totalCustomers, orders, customRequests] = await Promise.all([
+        const [totalProducts, pendingCustom, pendingOrders, financeRecords, totalCustomers, orders, customRequests] = await Promise.all([
             Product.countDocuments().catch(() => 0),
             CustomRequest.countDocuments({ status: 'Pending' }).catch(() => 0),
+            Order.countDocuments({ status: 'Pending' }).catch(() => 0),
             Finance.find().lean().catch(() => []),
             User.countDocuments({ role: 'user' }).catch(() => 0),
             Order.find({ status: 'Completed' }).lean().catch(() => []),
             CustomRequest.find({ status: 'Completed' }).lean().catch(() => [])
         ]);
+
+        const pendingRequests = pendingCustom + pendingOrders;
 
         const manualRevenue = (financeRecords as any[]).reduce((acc, curr) => {
             if (curr.type === 'income') return acc + curr.amount;

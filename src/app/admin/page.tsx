@@ -34,14 +34,14 @@ export default function AdminDashboard() {
             try {
                 const [statsRes, activityRes] = await Promise.all([
                     fetch('/api/admin/stats'),
-                    fetch('/api/custom-requests')
+                    fetch('/api/orders')
                 ]);
 
                 const stats = await statsRes.json();
                 const activityData = await activityRes.json();
 
                 setStatsData(stats);
-                setRecentActivity(activityData.requests?.slice(0, 5) || []);
+                setRecentActivity(activityData.orders?.slice(0, 5) || []);
             } catch (error) {
                 console.error('Error fetching dashboard data:', error);
             } finally {
@@ -67,7 +67,7 @@ export default function AdminDashboard() {
             change: isAr ? 'في انتظار البدء' : 'Awaiting action',
             icon: MessageSquare,
             color: 'amber',
-            link: '/admin/requests'
+            link: '/admin/orders'
         },
         {
             label: isAr ? 'إجمالي الأرباح' : 'Total Revenue',
@@ -172,7 +172,7 @@ export default function AdminDashboard() {
                             </div>
                             <h2 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">Recent Activity</h2>
                         </div>
-                        <Link href="/admin/requests" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-colors">
+                        <Link href="/admin/orders" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 transition-colors">
                             View All History
                         </Link>
                     </div>
@@ -190,10 +190,17 @@ export default function AdminDashboard() {
                             recentActivity.map((activity, i) => (
                                 <motion.div
                                     key={activity._id}
-                                    className="flex items-center gap-6 p-6 rounded-[1.5rem] hover:bg-slate-50 dark:hover:bg-white/5 transition-all duration-300 group ring-1 ring-transparent hover:ring-indigo-500/10"
+                                    className="flex items-center gap-6 p-6 rounded-[1.5rem] hover:bg-slate-50 dark:hover:bg-white/5 transition-all duration-300 group ring-1 ring-transparent hover:ring-indigo-500/10 cursor-pointer"
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.05 }}
+                                    onClick={() => {
+                                        if (activity.source === 'custom') {
+                                            window.location.href = `/admin/requests/${activity._id}`;
+                                        } else {
+                                            window.location.href = `/admin/orders/${activity._id}`;
+                                        }
+                                    }}
                                 >
                                     <div className="w-14 h-14 rounded-2xl bg-indigo-600/5 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
                                         <span className="text-2xl font-black text-indigo-600 italic">
@@ -202,13 +209,15 @@ export default function AdminDashboard() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-3 mb-1">
-                                            <p className="font-black text-slate-900 dark:text-white text-lg truncate">New Custom Request</p>
+                                            <p className="font-black text-slate-900 dark:text-white text-lg truncate">
+                                                {activity.source === 'custom' ? 'New Custom Request' : 'New Shop Order'}
+                                            </p>
                                             <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${activity.status === 'Pending' ? 'bg-amber-500/10 text-amber-600' : 'bg-emerald-500/10 text-emerald-600'
                                                 }`}>
                                                 {activity.status}
                                             </span>
                                         </div>
-                                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{activity.userName} • {activity.userEmail}</p>
+                                        <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{activity.userName} • {activity.userPhone || activity.userEmail}</p>
                                     </div>
                                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest shrink-0">
                                         {new Date(activity.createdAt).toLocaleDateString()}
