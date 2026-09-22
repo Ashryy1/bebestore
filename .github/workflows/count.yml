@@ -9,7 +9,3 @@ jobs:
         run: |
           sudo apt-get install cloc
           cloc .
-
-
-          ز
-
