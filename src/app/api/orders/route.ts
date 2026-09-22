@@ -6,30 +6,56 @@ import { CustomRequest } from '@/lib/models/CustomRequest';
 export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
-        const { userName, userPhone, items, totalAmount, userId, shippingDetails, isWhatsAppOrder } = body;
+        const {
+            userName,
+            userPhone,
+            items,
+            totalAmount,
+            userId,
+            shippingDetails,
+            isWhatsAppOrder,
+            paymentMethod = 'cod',
+            paymentReceipt,
+        } = body;
 
-        if (!userPhone || !items || items.length === 0) {
-            return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+        if (!userPhone || !items || !Array.isArray(items) || items.length === 0) {
+            return NextResponse.json({ error: 'Missing required fields or empty cart' }, { status: 400 });
         }
 
         await connectDB();
 
         const orderNumber = `ORD-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
 
-        const order = await Order.create({
-            orderNumber,
-            userId,
-            userName: userName || 'Customer',
-            userPhone,
-            items,
-            totalAmount,
-            shippingDetails,
-            status: 'Pending',
-            isWhatsAppOrder: !!isWhatsAppOrder,
+        // Compute total amount server-side to guarantee data integrity
+        let verifiedTotal = 0;
+        const verifiedItems = items.map((item: any) => {
+            const itemPrice = typeof item.price === 'number' && item.price >= 0 ? item.price : 0;
+            const quantity = typeof item.quantity === 'number' && item.quantity > 0 ? item.quantity : 1;
+            verifiedTotal += itemPrice * quantity;
+            return {
+                ...item,
+                price: itemPrice,
+                quantity,
+            };
         });
 
-        return NextResponse.json({ order });
-        return NextResponse.json({ order });
+        const finalTotal = verifiedTotal > 0 ? verifiedTotal : (Number(totalAmount) || 0);
+
+        const order = await Order.create({
+            orderNumber,
+            userId: userId || undefined,
+            userName: userName || 'Customer',
+            userPhone,
+            items: verifiedItems,
+            totalAmount: finalTotal,
+            shippingDetails,
+            paymentMethod,
+            paymentReceipt: paymentReceipt || undefined,
+            status: 'Pending',
+            isWhatsAppOrder: Boolean(isWhatsAppOrder),
+        });
+
+        return NextResponse.json({ order, success: true }, { status: 201 });
     } catch (error: any) {
         console.error('Order POST error:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

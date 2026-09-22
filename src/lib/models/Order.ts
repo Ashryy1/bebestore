@@ -26,6 +26,8 @@ export interface IOrder {
         address: string;
         city: string;
     };
+    paymentMethod?: 'cod' | 'vodafone_cash' | 'instapay';
+    paymentReceipt?: string;
     depositAmount: number;
     depositStatus: 'None' | 'Requested' | 'Pending' | 'Paid' | 'Rejected';
     depositScreenshot?: string;
@@ -64,6 +66,12 @@ const OrderSchema = new Schema<IOrder>(
             address: { type: String },
             city: { type: String },
         },
+        paymentMethod: {
+            type: String,
+            enum: ['cod', 'vodafone_cash', 'instapay'],
+            default: 'cod',
+        },
+        paymentReceipt: { type: String },
         depositAmount: { type: Number, default: 0 },
         depositStatus: {
             type: String,

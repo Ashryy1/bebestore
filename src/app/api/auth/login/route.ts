@@ -7,32 +7,6 @@ export async function POST(req: NextRequest) {
     try {
         const { email, password } = await req.json();
 
-        // LOCAL TEST MODE FALLBACK (Bypasses DB if credentials match)
-        if (password === 'test123') {
-            let userRole: 'admin' | 'user' = 'user';
-            let testId = 'test-user-id';
-            let testName = 'Test User';
-
-            if (email === 'admin@test.com') {
-                userRole = 'admin';
-                testId = 'test-admin-id';
-                testName = 'Test Admin';
-            } else if (email !== 'user@test.com') {
-                // Not a test email
-                throw new Error('Not a test email');
-            }
-
-            const token = signToken({ userId: testId, email, role: userRole });
-            const response = NextResponse.json({
-                message: 'Login successful (TEST MODE)',
-                user: { id: testId, name: testName, email, role: userRole },
-            });
-            response.cookies.set('auth-token', token, {
-                httpOnly: true, secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax', maxAge: 60 * 60 * 24 * 7, path: '/',
-            });
-            return response;
-        }
 
         try {
             await connectDB();
