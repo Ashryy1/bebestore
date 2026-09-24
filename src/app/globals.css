@@ -58,12 +58,11 @@ html, body {
 }
 
 body {
-  /* Default English: Caveat for lovely handcrafted feel, with Aref Ruqaa fallback for Arabic products/inputs */
-  font-family: 'Caveat', 'Outfit', 'Aref Ruqaa', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, cursive, sans-serif !important;
-  font-size: 1.125rem;
+  /* Clean modern sans-serif: Outfit, with Aref Ruqaa fallback for Arabic inputs/products */
+  font-family: 'Outfit', 'Aref Ruqaa', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
   background-image:
-    radial-gradient(at 0% 0%, rgba(133, 159, 132, 0.1) 0, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(193, 182, 210, 0.1) 0, transparent 50%) !important;
+    radial-gradient(at 0% 0%, rgba(133, 159, 132, 0.08) 0, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(193, 182, 210, 0.08) 0, transparent 50%) !important;
 }
 
 /* Bi-directional auto alignment: When admin or user writes in Arabic, text auto aligns correctly */
@@ -75,7 +74,7 @@ textarea {
 /* ─── Global Font Setup ─── */
 html,
 body {
-  font-family: 'Caveat', 'Outfit', 'Aref Ruqaa', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, cursive, sans-serif !important;
+  font-family: 'Outfit', 'Aref Ruqaa', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
 /* Explicit Utility Classes */
