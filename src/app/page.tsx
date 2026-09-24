@@ -101,31 +101,21 @@ export default function HomePage() {
 
                 <div className="container mx-auto px-6 relative z-10 text-center">
                     <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
+                        initial={{ scale: 0.85, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                        className="relative w-48 h-48 md:w-64 md:h-64 mx-auto mb-8 flex items-center justify-center"
+                        className="relative w-36 h-36 md:w-44 md:h-44 mx-auto mb-8 flex items-center justify-center"
                     >
-                        {/* Soft blend masked crochet video showing real hands */}
-                        <div
-                            className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-full shadow-2xl"
-                            style={{
-                                maskImage: 'radial-gradient(circle at center, black 55%, transparent 82%)',
-                                WebkitMaskImage: 'radial-gradient(circle at center, black 55%, transparent 82%)'
-                            }}
-                        >
-                            <video
-                                src="/crochet-video.mp4"
-                                autoPlay
-                                loop
-                                muted
-                                playsInline
-                                className="w-full h-full object-cover scale-110 pointer-events-none rotate-180"
-                            />
+                        {/* Soft Ambient Radial Glow */}
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-[var(--sh-primary)]/20 via-[var(--sh-accent)]/20 to-transparent blur-2xl pointer-events-none" />
+
+                        {/* Floating Brand Emblem */}
+                        <div className="relative w-full h-full rounded-3xl bg-[var(--sh-card)]/80 border border-[var(--sh-border)] shadow-xl p-4 flex items-center justify-center backdrop-blur-md">
+                            <img src="/logo.png" alt="BibaStore Logo" className="w-full h-full object-contain filter drop-shadow-md" />
                         </div>
 
                         {/* Floating Craft Badge */}
-                        <div className="absolute -bottom-2 px-3.5 py-1 rounded-full bg-[var(--sh-card)]/90 border border-[var(--sh-border)] shadow-md backdrop-blur-md flex items-center gap-1.5 z-10">
+                        <div className="absolute -bottom-2 px-3.5 py-1 rounded-full bg-[var(--sh-card)]/95 border border-[var(--sh-border)] shadow-md backdrop-blur-md flex items-center gap-1.5 z-10">
                             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                             <span className="text-xs font-bold uppercase tracking-wider text-[var(--sh-fg)] font-sans">
                                 Handcrafted with Love
