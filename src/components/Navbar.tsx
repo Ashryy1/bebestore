@@ -28,7 +28,7 @@ export default function Navbar() {
     }, [pathname]);
 
     useEffect(() => {
-        const handleScroll = () => setScrolled(window.scrollY > 20);
+        const handleScroll = () => setScrolled(window.scrollY > 15);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -48,14 +48,14 @@ export default function Navbar() {
             <header
                 className={`fixed top-0 left-0 right-0 z-50 h-20 transition-all duration-300 ${scrolled
                     ? 'bg-[var(--sh-bg)]/95 backdrop-blur-md border-b border-[var(--sh-border)] shadow-sm'
-                    : 'bg-[var(--sh-bg)]/75 backdrop-blur-sm border-b border-[var(--sh-border)]/50'
+                    : 'bg-[var(--sh-bg)]/80 backdrop-blur-sm border-b border-[var(--sh-border)]/50'
                     }`}
             >
                 <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
 
                     {/* Left: Brand Identity */}
                     <Link href="/" className="flex items-center gap-3 shrink-0 group">
-                        <div className="w-11 h-11 rounded-2xl bg-[var(--sh-card)] border border-[var(--sh-border)] p-1.5 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-200">
+                        <div className="w-12 h-12 rounded-2xl bg-[var(--sh-card)] border border-[var(--sh-border)] p-1.5 flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform duration-200">
                             <img
                                 src="/logo.png"
                                 alt="BibaStore"
@@ -63,26 +63,26 @@ export default function Navbar() {
                             />
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-xl font-bold tracking-tight text-[var(--sh-fg)] font-outfit leading-none">
+                            <span className="text-2xl font-bold tracking-tight text-[var(--sh-fg)] font-outfit leading-none">
                                 BibaStore
                             </span>
-                            <span className="text-[10px] uppercase font-bold tracking-widest text-[var(--sh-primary)] mt-1 leading-none">
+                            <span className="text-sm font-bold tracking-wider text-[var(--sh-primary)] mt-1 leading-none">
                                 Handmade Crochet
                             </span>
                         </div>
                     </Link>
 
                     {/* Center: Desktop Navigation */}
-                    <nav className="hidden md:flex items-center gap-1.5 bg-[var(--sh-card)]/80 border border-[var(--sh-border)] px-2.5 py-1.5 rounded-2xl shadow-sm">
+                    <nav className="hidden md:flex items-center gap-2 bg-[var(--sh-card)]/80 border border-[var(--sh-border)] px-3 py-1.5 rounded-2xl shadow-sm">
                         {navLinks.map((link) => {
                             const isActive = pathname === link.href;
                             return (
                                 <Link
                                     key={link.href}
                                     href={link.href}
-                                    className={`px-4 py-1.5 rounded-xl text-sm font-semibold transition-all duration-150 ${isActive
-                                        ? 'bg-[var(--sh-primary)] text-white shadow-sm font-bold'
-                                        : 'text-[var(--sh-fg)]/70 hover:text-[var(--sh-fg)] hover:bg-[var(--sh-hover)]/30'
+                                    className={`px-4 py-2 rounded-xl text-lg font-bold tracking-wide transition-all duration-150 inline-flex items-center leading-none ${isActive
+                                        ? 'bg-[var(--sh-primary)] text-white shadow-sm'
+                                        : 'text-[var(--sh-fg)]/75 hover:text-[var(--sh-fg)] hover:bg-[var(--sh-hover)]/30'
                                         }`}
                                 >
                                     {link.label}
@@ -91,29 +91,29 @@ export default function Navbar() {
                         })}
                     </nav>
 
-                    {/* Right: Actions Controls (Unified 40px Height) */}
+                    {/* Right: Actions Controls (Unified 44px Height for comfortable hand-crafted sizing) */}
                     <div className="flex items-center gap-2.5 shrink-0">
 
                         {/* Theme Toggle */}
                         <button
                             onClick={toggleTheme}
-                            className="w-10 h-10 rounded-xl bg-[var(--sh-card)]/80 border border-[var(--sh-border)] text-[var(--sh-fg)]/80 hover:text-[var(--sh-fg)] hover:bg-[var(--sh-hover)]/40 flex items-center justify-center shadow-sm transition-all active:scale-95"
+                            className="w-11 h-11 rounded-xl bg-[var(--sh-card)]/80 border border-[var(--sh-border)] text-[var(--sh-fg)]/80 hover:text-[var(--sh-fg)] hover:bg-[var(--sh-hover)]/40 flex items-center justify-center shadow-sm transition-all active:scale-95"
                             aria-label="Toggle Theme"
                             title={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
                         >
-                            {isDark ? <Sun size={18} /> : <Moon size={18} />}
+                            {isDark ? <Sun size={19} /> : <Moon size={19} />}
                         </button>
 
                         {/* Cart Button */}
                         <button
                             onClick={() => setCartOpen(true)}
-                            className="relative h-10 px-3.5 rounded-xl bg-[var(--sh-card)]/80 border border-[var(--sh-border)] text-[var(--sh-fg)] hover:bg-[var(--sh-hover)]/40 flex items-center gap-2 shadow-sm transition-all active:scale-95 font-semibold text-sm"
+                            className="relative h-11 px-4 rounded-xl bg-[var(--sh-card)]/80 border border-[var(--sh-border)] text-[var(--sh-fg)] hover:bg-[var(--sh-hover)]/40 flex items-center gap-2 shadow-sm transition-all active:scale-95 font-bold text-base leading-none"
                             aria-label="View Cart"
                         >
-                            <ShoppingBag size={18} className="text-[var(--sh-primary)]" />
+                            <ShoppingBag size={19} className="text-[var(--sh-primary)]" />
                             <span className="hidden sm:inline">Cart</span>
                             {totalItems > 0 && (
-                                <span className="w-5 h-5 -mr-1 rounded-full bg-[var(--sh-primary)] text-white text-[11px] font-bold flex items-center justify-center shadow-sm animate-in zoom-in">
+                                <span className="w-5 h-5 -mr-1 rounded-full bg-[var(--sh-primary)] text-white text-xs font-bold flex items-center justify-center shadow-sm animate-in zoom-in font-sans">
                                     {totalItems}
                                 </span>
                             )}
@@ -123,25 +123,25 @@ export default function Navbar() {
                         {user ? (
                             <Link
                                 href="/settings"
-                                className="h-10 px-3 rounded-xl bg-[var(--sh-card)]/80 border border-[var(--sh-border)] flex items-center gap-2.5 text-[var(--sh-fg)] hover:bg-[var(--sh-hover)]/40 shadow-sm transition-all active:scale-95 group"
+                                className="h-11 px-3.5 rounded-xl bg-[var(--sh-card)]/80 border border-[var(--sh-border)] flex items-center gap-2.5 text-[var(--sh-fg)] hover:bg-[var(--sh-hover)]/40 shadow-sm transition-all active:scale-95 group font-bold text-base leading-none"
                             >
-                                <div className="w-7 h-7 rounded-lg bg-[var(--sh-primary)] text-white flex items-center justify-center font-bold text-xs shadow-sm overflow-hidden shrink-0">
+                                <div className="w-7 h-7 rounded-lg bg-[var(--sh-primary)] text-white flex items-center justify-center font-bold text-xs shadow-sm overflow-hidden shrink-0 font-sans">
                                     {user.image ? (
                                         <img src={user.image} alt="Profile" className="w-full h-full object-cover" />
                                     ) : (
                                         (user.name || user.email).charAt(0).toUpperCase()
                                     )}
                                 </div>
-                                <span className="text-xs font-semibold max-w-[85px] truncate hidden sm:inline">
+                                <span className="max-w-[90px] truncate hidden sm:inline">
                                     {user.name ? user.name.split(' ')[0] : 'Account'}
                                 </span>
                             </Link>
                         ) : (
                             <Link
                                 href="/auth/login"
-                                className="h-10 px-4 rounded-xl bg-[var(--btn-gradient)] hover:brightness-105 text-white text-xs font-bold shadow-sm transition-all active:scale-95 flex items-center gap-1.5"
+                                className="h-11 px-5 rounded-xl bg-[var(--btn-gradient)] hover:brightness-105 text-white text-base font-bold shadow-md transition-all active:scale-95 flex items-center gap-2 leading-none"
                             >
-                                <User size={15} />
+                                <User size={17} />
                                 <span>Sign In</span>
                             </Link>
                         )}
@@ -149,10 +149,10 @@ export default function Navbar() {
                         {/* Mobile Menu Toggle */}
                         <button
                             onClick={() => setIsOpen(!isOpen)}
-                            className="md:hidden w-10 h-10 rounded-xl bg-[var(--sh-card)]/80 border border-[var(--sh-border)] text-[var(--sh-fg)] flex items-center justify-center shadow-sm active:scale-95 transition-all"
+                            className="md:hidden w-11 h-11 rounded-xl bg-[var(--sh-card)]/80 border border-[var(--sh-border)] text-[var(--sh-fg)] flex items-center justify-center shadow-sm active:scale-95 transition-all"
                             aria-label="Navigation Menu"
                         >
-                            <Menu size={20} />
+                            <Menu size={22} />
                         </button>
                     </div>
 
@@ -183,12 +183,12 @@ export default function Navbar() {
                             {/* Drawer Header */}
                             <div className="p-6 border-b border-[var(--sh-border)] flex items-center justify-between">
                                 <Link href="/" onClick={() => setIsOpen(false)} className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-xl bg-[var(--sh-card)] border border-[var(--sh-border)] p-1.5 flex items-center justify-center">
+                                    <div className="w-11 h-11 rounded-xl bg-[var(--sh-card)] border border-[var(--sh-border)] p-1.5 flex items-center justify-center">
                                         <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
                                     </div>
                                     <div>
-                                        <h2 className="text-lg font-bold text-[var(--sh-fg)] leading-none font-outfit">BibaStore</h2>
-                                        <p className="text-[10px] text-[var(--sh-primary)] font-bold tracking-wider uppercase mt-1">Handmade Crochet</p>
+                                        <h2 className="text-xl font-bold text-[var(--sh-fg)] leading-none font-outfit">BibaStore</h2>
+                                        <p className="text-sm text-[var(--sh-primary)] font-bold tracking-wider mt-1">Handmade Crochet</p>
                                     </div>
                                 </Link>
                                 <button
@@ -202,7 +202,7 @@ export default function Navbar() {
                             {/* Drawer Links */}
                             <div className="flex-1 p-6 space-y-6 overflow-y-auto">
                                 <div className="space-y-2">
-                                    <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--sh-fg)]/50 ml-1">Menu</p>
+                                    <p className="text-xs font-bold uppercase tracking-wider text-[var(--sh-fg)]/50 ml-1 font-sans">Menu</p>
                                     <div className="grid gap-2">
                                         {navLinks.map((link) => {
                                             const isActive = pathname === link.href;
@@ -211,12 +211,12 @@ export default function Navbar() {
                                                     key={link.href}
                                                     href={link.href}
                                                     onClick={() => setIsOpen(false)}
-                                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm transition-all ${isActive
-                                                        ? 'bg-[var(--sh-primary)] text-white shadow-sm font-bold'
+                                                    className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-lg transition-all ${isActive
+                                                        ? 'bg-[var(--sh-primary)] text-white shadow-sm'
                                                         : 'bg-[var(--sh-card)] text-[var(--sh-fg)] hover:bg-[var(--sh-hover)]/30 border border-[var(--sh-border)]/50'
                                                         }`}
                                                 >
-                                                    <link.icon size={18} />
+                                                    <link.icon size={20} />
                                                     <span>{link.label}</span>
                                                 </Link>
                                             );
@@ -226,7 +226,7 @@ export default function Navbar() {
 
                                 {/* Appearance Row */}
                                 <div className="space-y-2">
-                                    <p className="text-[10px] font-bold uppercase tracking-wider text-[var(--sh-fg)]/50 ml-1">Theme</p>
+                                    <p className="text-xs font-bold uppercase tracking-wider text-[var(--sh-fg)]/50 ml-1 font-sans">Theme</p>
                                     <button
                                         onClick={toggleTheme}
                                         className="flex items-center justify-between w-full px-4 py-3 rounded-xl bg-[var(--sh-card)] border border-[var(--sh-border)]/50 text-[var(--sh-fg)] hover:bg-[var(--sh-hover)]/30 transition-all"
@@ -235,9 +235,9 @@ export default function Navbar() {
                                             <div className="w-8 h-8 rounded-lg bg-[var(--sh-primary)]/15 text-[var(--sh-primary)] flex items-center justify-center">
                                                 {isDark ? <Sun size={17} /> : <Moon size={17} />}
                                             </div>
-                                            <span className="font-semibold text-sm">Mode</span>
+                                            <span className="font-bold text-base">Appearance</span>
                                         </div>
-                                        <span className="text-xs font-bold uppercase text-[var(--sh-primary)]">
+                                        <span className="text-sm font-bold text-[var(--sh-primary)] font-sans">
                                             {isDark ? 'Dark' : 'Light'}
                                         </span>
                                     </button>
@@ -249,7 +249,7 @@ export default function Navbar() {
                                 {user ? (
                                     <div className="flex items-center justify-between">
                                         <Link href="/settings" onClick={() => setIsOpen(false)} className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-xl bg-[var(--sh-primary)] text-white flex items-center justify-center font-bold overflow-hidden shadow-sm">
+                                            <div className="w-10 h-10 rounded-xl bg-[var(--sh-primary)] text-white flex items-center justify-center font-bold overflow-hidden shadow-sm font-sans">
                                                 {user.image ? (
                                                     <img src={user.image} alt="Profile" className="w-full h-full object-cover" />
                                                 ) : (
@@ -257,8 +257,8 @@ export default function Navbar() {
                                                 )}
                                             </div>
                                             <div className="min-w-0">
-                                                <p className="text-sm font-bold text-[var(--sh-fg)] truncate">{user.name || user.email.split('@')[0]}</p>
-                                                <button onClick={logout} className="text-[10px] text-red-500 font-bold uppercase tracking-wider">Sign Out</button>
+                                                <p className="text-base font-bold text-[var(--sh-fg)] truncate leading-tight">{user.name || user.email.split('@')[0]}</p>
+                                                <button onClick={logout} className="text-xs text-red-500 font-bold uppercase tracking-wider font-sans">Sign Out</button>
                                             </div>
                                         </Link>
                                         <div className="flex items-center gap-2">
@@ -276,7 +276,7 @@ export default function Navbar() {
                                     <Link
                                         href="/auth/login"
                                         onClick={() => setIsOpen(false)}
-                                        className="w-full h-11 rounded-xl bg-[var(--btn-gradient)] text-white font-bold flex items-center justify-center text-sm shadow-md"
+                                        className="w-full h-12 rounded-xl bg-[var(--btn-gradient)] text-white font-bold flex items-center justify-center text-lg shadow-md"
                                     >
                                         Sign In / Register
                                     </Link>
