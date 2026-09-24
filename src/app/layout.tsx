@@ -9,7 +9,6 @@ import { LanguageProvider } from '@/context/LanguageContext';
 import { CartProvider } from '@/context/CartContext';
 
 import SupportChat from '@/components/SupportChat';
-import BrandIntro from '@/components/BrandIntro';
 
 export const metadata: Metadata = {
     title: 'BibaStore — Premium Handmade Crochet Store',
@@ -31,7 +30,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </head>
             <body className="min-h-screen flex flex-col antialiased">
                 <LanguageProvider>
-                    <BrandIntro />
                     <AuthProvider>
                         <CartProvider>
                             <Navbar />
