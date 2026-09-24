@@ -52,12 +52,21 @@
 body {
   background-color: var(--sh-bg) !important;
   color: var(--sh-fg) !important;
-  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  font-family: 'Outfit', 'Aref Ruqaa', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
   transition: background-color 0.5s ease, color 0.5s ease;
   /* Premium Mesh Texture for Light Mode */
   background-image:
     radial-gradient(at 0% 0%, rgba(133, 159, 132, 0.1) 0, transparent 50%),
     radial-gradient(at 100% 100%, rgba(193, 182, 210, 0.1) 0, transparent 50%) !important;
+}
+
+[lang="ar"],
+[dir="rtl"] {
+  font-family: 'Aref Ruqaa', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.font-ruqaa {
+  font-family: 'Aref Ruqaa', cursive, serif !important;
 }
 
 .dark body {

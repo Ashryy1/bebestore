@@ -7,6 +7,10 @@ const config: Config = {
     darkMode: 'class',
     theme: {
         extend: {
+            fontFamily: {
+                sans: ['Outfit', 'Aref Ruqaa', 'sans-serif'],
+                ruqaa: ['"Aref Ruqaa"', 'cursive', 'serif'],
+            },
             colors: {
                 brand: {
                     50: '#fdfaff', 100: '#f9f5ff', 200: '#f0e6ff', 300: '#e1ccff',
