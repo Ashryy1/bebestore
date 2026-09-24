@@ -8,7 +8,7 @@ import { useLanguage } from '@/context/LanguageContext';
 import {
     Menu, X, User, LogOut, LayoutDashboard, Settings,
     Moon, Sun, ChevronRight, ShoppingBag,
-    Globe, Smartphone, Search, Heart,
+    Smartphone, Search, Heart,
     Scissors, Palette, Truck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -36,10 +36,6 @@ export default function Navbar() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    const toggleLang = () => {
-        setLang(lang === 'en' ? 'ar' : 'en');
-    };
-
     const navLinks = [
         { href: '/', label: t('home'), icon: Smartphone },
         { href: '/shop', label: t('shop'), icon: ShoppingBag },
@@ -53,7 +49,7 @@ export default function Navbar() {
 
     const sidebarVariants = {
         closed: {
-            x: lang === 'ar' ? '-100%' : '100%',
+            x: '100%',
             opacity: 0,
             transition: { type: 'spring', damping: 40, stiffness: 400 }
         },
@@ -65,7 +61,7 @@ export default function Navbar() {
     };
 
     const itemVariants = {
-        closed: { x: lang === 'ar' ? -20 : 20, opacity: 0 },
+        closed: { x: 20, opacity: 0 },
         open: { x: 0, opacity: 1 }
     };
 
@@ -109,25 +105,14 @@ export default function Navbar() {
 
                         {/* Actions Area */}
                         <div className="flex items-center gap-4">
-                            {/* Settings Pill */}
-                            <div className="hidden md:flex items-center gap-1 p-1 bg-slate-100/10 dark:bg-black/40 rounded-2xl border border-slate-200/50 dark:border-white/5">
-                                <button
-                                    onClick={toggleLang}
-                                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] font-black text-[var(--sh-fg)] opacity-60 hover:text-[var(--sh-primary)] hover:bg-[var(--sh-bg)] transition-all uppercase tracking-[0.1em]"
-                                >
-                                    <Globe size={14} className="text-[var(--sh-primary)] opacity-60" />
-                                    {lang === 'en' ? 'Arabic' : 'English'}
-                                </button>
-
-                                <div className="w-px h-5 bg-slate-200 dark:bg-white/5 mx-1" />
-
-                                <button
-                                    onClick={toggleTheme}
-                                    className="p-2 rounded-xl text-[var(--sh-fg)] opacity-60 hover:text-[var(--sh-primary)] hover:bg-[var(--sh-bg)] transition-all shadow-sm"
-                                >
-                                    {isDark ? <Sun size={18} /> : <Moon size={18} />}
-                                </button>
-                            </div>
+                            {/* Theme Toggle Button */}
+                            <button
+                                onClick={toggleTheme}
+                                className="p-2.5 rounded-xl text-[var(--sh-fg)] opacity-70 hover:opacity-100 hover:text-[var(--sh-primary)] hover:bg-slate-100/50 dark:hover:bg-white/5 border border-slate-200/50 dark:border-white/5 transition-all shadow-sm"
+                                aria-label="Toggle Theme"
+                            >
+                                {isDark ? <Sun size={18} /> : <Moon size={18} />}
+                            </button>
 
                             {user ? (
                                 <div className="flex items-center gap-2 p-1 bg-slate-100/50 dark:bg-slate-800/40 rounded-2xl border border-slate-200/50 dark:border-slate-800/30">
@@ -152,7 +137,7 @@ export default function Navbar() {
                                 </div>
                             ) : (
                                 <Link href="/auth/login" className="premium-button text-sm py-2.5 px-6">
-                                    <User size={16} className={`${lang === 'ar' ? 'ml-2' : 'mr-2'}`} />
+                                    <User size={16} className="mr-2" />
                                     {t('login')}
                                 </Link>
                             )}
@@ -199,7 +184,7 @@ export default function Navbar() {
                             initial="closed"
                             animate="open"
                             exit="closed"
-                            className={`absolute ${lang === 'ar' ? 'left-0' : 'right-0'} top-0 bottom-0 w-[85%] max-w-sm bg-white dark:bg-slate-950 shadow-2xl overflow-hidden`}
+                            className="absolute right-0 top-0 bottom-0 w-[85%] max-w-sm bg-white dark:bg-slate-950 shadow-2xl overflow-hidden"
                         >
                             <div className="flex flex-col h-full">
                                 {/* Header */}
@@ -246,29 +231,17 @@ export default function Navbar() {
 
                                     <div className="space-y-4">
                                         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 ml-1">Settings</p>
-                                        <motion.div variants={itemVariants} className="p-2 bg-slate-50 dark:bg-white/5 rounded-[2.5rem] space-y-2">
-                                            <button onClick={toggleLang} className="flex items-center justify-between w-full p-5 rounded-[2rem] hover:bg-white dark:hover:bg-white/5 transition-all group">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-500 flex items-center justify-center">
-                                                        <Globe size={20} />
-                                                    </div>
-                                                    <span className="font-bold text-slate-700 dark:text-slate-200">{lang === 'ar' ? 'اللغة' : 'Language'}</span>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600">{lang === 'ar' ? 'العربية' : 'English'}</span>
-                                                    <ChevronRight size={16} className={`text-slate-300 ${lang === 'ar' ? 'rotate-180' : ''}`} />
-                                                </div>
-                                            </button>
+                                        <motion.div variants={itemVariants} className="p-2 bg-slate-50 dark:bg-white/5 rounded-[2.5rem]">
                                             <button onClick={toggleTheme} className="flex items-center justify-between w-full p-5 rounded-[2rem] hover:bg-white dark:hover:bg-white/5 transition-all group">
                                                 <div className="flex items-center gap-4">
                                                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isDark ? 'bg-amber-500/10 text-amber-500' : 'bg-indigo-500/10 text-indigo-500'}`}>
                                                         {isDark ? <Sun size={20} /> : <Moon size={20} />}
                                                     </div>
-                                                    <span className="font-bold text-slate-700 dark:text-slate-200">{lang === 'ar' ? 'المظهر' : 'Appearance'}</span>
+                                                    <span className="font-bold text-slate-700 dark:text-slate-200">Appearance</span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600">{isDark ? 'Dark' : 'Light'}</span>
-                                                    <ChevronRight size={16} className={`text-slate-300 ${lang === 'ar' ? 'rotate-180' : ''}`} />
+                                                    <ChevronRight size={16} className="text-slate-300" />
                                                 </div>
                                             </button>
                                         </motion.div>

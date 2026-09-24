@@ -11,9 +11,9 @@ import { CartProvider } from '@/context/CartContext';
 import SupportChat from '@/components/SupportChat';
 
 export const metadata: Metadata = {
-    title: 'BibaStore | بيبا أستور — Premium Handmade Store',
+    title: 'BibaStore — Premium Handmade Crochet Store',
     description: 'Beautiful handmade pieces crafted with love at BibaStore. Custom orders welcome.',
-    keywords: ['BibaStore', 'handmade', 'custom', 'premium', 'craft'],
+    keywords: ['BibaStore', 'handmade', 'custom', 'premium', 'craft', 'crochet'],
     icons: {
         icon: '/logo.png',
         apple: '/logo.png',
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en" suppressHydrationWarning>
+        <html lang="en" dir="ltr" suppressHydrationWarning>
             <head>
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
