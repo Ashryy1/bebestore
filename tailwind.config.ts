@@ -10,6 +10,7 @@ const config: Config = {
             fontFamily: {
                 sans: ['Outfit', 'Aref Ruqaa', 'sans-serif'],
                 ruqaa: ['"Aref Ruqaa"', 'cursive', 'serif'],
+                caveat: ['Caveat', 'cursive'],
             },
             colors: {
                 brand: {
