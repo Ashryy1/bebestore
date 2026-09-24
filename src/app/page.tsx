@@ -120,7 +120,7 @@ export default function HomePage() {
                                 loop
                                 muted
                                 playsInline
-                                className="w-full h-full object-cover scale-110 pointer-events-none"
+                                className="w-full h-full object-cover scale-110 pointer-events-none rotate-180"
                             />
                         </div>
 
