@@ -88,7 +88,7 @@ export default function ShopPage() {
                     </motion.div>
 
                     <motion.h1
-                        className="text-6xl md:text-8xl font-black mb-6 tracking-tight text-[var(--sh-fg)]"
+                        className="text-6xl md:text-8xl font-black mb-6 tracking-normal leading-tight text-[var(--sh-fg)] overflow-visible"
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                     >

@@ -98,12 +98,27 @@ body {
 
 /* ─── Premium Components (Vanilla Fallback) ─── */
 
+/* Prevent cursive handwriting fonts and headings from letter clipping */
+h1, h2, h3, h4, h5, h6 {
+  overflow: visible;
+}
+
 .gradient-text {
   background: var(--text-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
+  /* Extra breathing room on the right so cursive swashes (like 'e' in Elegance) are never sliced off */
+  padding-inline-end: 0.32em;
+  padding-inline-start: 0.06em;
+  padding-block: 0.08em;
+  margin-inline-end: -0.24em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  overflow: visible;
+  line-height: normal;
+  vertical-align: baseline;
 }
 
 .premium-button {

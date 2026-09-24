@@ -61,7 +61,7 @@ export default function TrackRequestsPage() {
                         <Clock size={14} />
                         {isAr ? 'تتبع طلبك' : 'Track Order'}
                     </span>
-                    <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter text-[var(--sh-fg)] leading-[1.1]">
+                    <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-normal overflow-visible text-[var(--sh-fg)] leading-[1.1]">
                         {isAr ? <>أين <span className="gradient-text">غرزتك</span> الآن؟</> : <>Where is your <span className="gradient-text">Stitch</span>?</>}
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 max-w-xl mx-auto text-lg font-medium">

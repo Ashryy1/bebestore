@@ -128,7 +128,7 @@ export default function CustomRequestPage() {
                         <Sparkles size={14} />
                         {isAr ? 'طلب خاص للجميع' : 'Custom Order for Everyone'}
                     </span>
-                    <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter text-[var(--sh-fg)] leading-[1.1]">
+                    <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-normal overflow-visible text-[var(--sh-fg)] leading-[1.1]">
                         {isAr ? <>حوّل <span className="gradient-text">خيالك</span> لواقع</> : <>Bring Your <span className="gradient-text">Imagination</span> to Life</>}
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto text-xl font-medium">

@@ -140,7 +140,7 @@ export default function HomePage() {
                             </span>
                         </motion.div>
 
-                        <h1 className="text-6xl md:text-8xl lg:text-9xl font-black mb-8 tracking-tighter leading-[0.9] text-[var(--sh-fg)]">
+                        <h1 className="text-6xl md:text-8xl lg:text-9xl font-black mb-8 tracking-normal leading-[1.05] text-[var(--sh-fg)] overflow-visible">
                             {isAr ? (
                                 <>جمال <span className="gradient-text">بيبا أستور</span> <br /> يُصنع من أجلك</>
                             ) : (
