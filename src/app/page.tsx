@@ -104,9 +104,33 @@ export default function HomePage() {
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-                        className="relative w-40 h-40 md:w-56 md:h-56 mx-auto mb-10"
+                        className="relative w-48 h-48 md:w-64 md:h-64 mx-auto mb-8 flex items-center justify-center"
                     >
-                        <img src="/logo.png" alt="BibaStore Logo" className="w-full h-full object-contain drop-shadow-2xl" />
+                        {/* Soft blend masked crochet video showing real hands */}
+                        <div
+                            className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-full shadow-2xl"
+                            style={{
+                                maskImage: 'radial-gradient(circle at center, black 55%, transparent 82%)',
+                                WebkitMaskImage: 'radial-gradient(circle at center, black 55%, transparent 82%)'
+                            }}
+                        >
+                            <video
+                                src="/crochet-video.mp4"
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                className="w-full h-full object-cover scale-110 pointer-events-none"
+                            />
+                        </div>
+
+                        {/* Floating Craft Badge */}
+                        <div className="absolute -bottom-2 px-3.5 py-1 rounded-full bg-[var(--sh-card)]/90 border border-[var(--sh-border)] shadow-md backdrop-blur-md flex items-center gap-1.5 z-10">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            <span className="text-xs font-bold uppercase tracking-wider text-[var(--sh-fg)] font-sans">
+                                Handcrafted with Love
+                            </span>
+                        </div>
                     </motion.div>
 
                     <motion.div
